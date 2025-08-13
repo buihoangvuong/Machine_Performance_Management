@@ -13,16 +13,18 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Machine_Performance_Management
+namespace Machine_Performance_Management.Home
 {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window
-	{
-		public MainWindow()
-		{
-			InitializeComponent();
-		}
-	}
+    /// <summary>
+    /// Interaction logic for HomeView.xaml
+    /// </summary>
+    public partial class HomeView : UserControl
+    {
+        private readonly HomeViewModel homeViewModel = new HomeViewModel();
+        public HomeView()
+        {
+            InitializeComponent();
+            DataContext = homeViewModel;
+        }
+    }
 }
