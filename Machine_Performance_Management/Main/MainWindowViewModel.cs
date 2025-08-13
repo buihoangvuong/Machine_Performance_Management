@@ -1,6 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Machine_Performance_Management.Admin;
 using Machine_Performance_Management.Home;
+using Machine_Performance_Management.Performance;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -81,6 +83,9 @@ namespace Machine_Performance_Management.Main
         private ICommand _clickHome;
         public ICommand ClickHome => _clickHome ?? (_clickHome = new RelayCommand(MenuHome));
 
+        private ICommand _clickPerformance;
+        public ICommand ClickPerformance => _clickPerformance ?? (_clickPerformance = new RelayCommand(MenuPerformance));
+
         private ICommand _clickAdmin;
         public ICommand ClickAdmin => _clickAdmin ?? (_clickAdmin = new RelayCommand(MenuAdmin));
         public MainWindowViewModel(string username, string role, string fullname)
@@ -102,9 +107,15 @@ namespace Machine_Performance_Management.Main
             SelectedMenuItem = "Home";
         }
 
+        public void MenuPerformance()
+        {
+            CurrentView = new PerformanceView();
+            SelectedMenuItem = "Performance";
+        }
+
         public void MenuAdmin()
         {
-            //CurrentView = new AdminView(FullName);
+            CurrentView = new AdminView(FullName);
             SelectedMenuItem = "Admin";
         }
 

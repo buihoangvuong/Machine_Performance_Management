@@ -9,7 +9,7 @@
         xmlns:local1="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
         d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         WindowStartupLocation="CenterScreen"
-        Title="Machine Performance Manager" Height="850" Width="1355">
+        Title="Machine Performance Manager 0.0.1" Height="850" Width="1355">
     <Grid>
         <Grid Background="White">
             <Grid.RowDefinitions>
@@ -55,6 +55,36 @@
                                 </Style>
                             </MenuItem.Style>
                         </MenuItem>
+
+                        <MenuItem Header="PERPORMANCE" Command="{Binding ClickPerformance}">
+                            <MenuItem.Style>
+                                <Style TargetType="MenuItem">
+                                    <Setter Property="Background">
+                                        <Setter.Value>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Color="#FF104380" Offset="0.0"/>
+                                                <GradientStop Color="#FF236189" Offset="1.0"/>
+                                            </LinearGradientBrush>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="BorderBrush" Value="White"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedMenuItem}" Value="Performance">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Color="#FF266E6E" Offset="0.0"/>
+                                                        <GradientStop Color="#FF449E9E" Offset="1.0"/>
+                                                    </LinearGradientBrush>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <!-- Màu khi được chọn -->
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </MenuItem.Style>
+                        </MenuItem>
+
                         <MenuItem Header="ADMIN" Command="{Binding ClickAdmin}">
                             <MenuItem.Style>
                                 <Style TargetType="MenuItem">

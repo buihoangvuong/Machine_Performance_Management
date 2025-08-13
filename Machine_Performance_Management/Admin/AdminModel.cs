@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Machine_Performance_Management.Extension;
-using MySqlConnector;
 using System;
 using Machine_Performance_Management.Common;
 using System.Collections.Generic;
@@ -21,50 +20,50 @@ namespace Machine_Performance_Management.Admin
             config = ini.GetLocalConfig();
         }
 
-        public List<UserProfile> LoadUserProfiles()
-        {
-            StringBuilder query = new StringBuilder();
-            query.Append("SELECT user_id, user_name, password, role, full_name FROM user_profile;");
-            List<UserProfile> userList = new List<UserProfile>();
+        //public List<UserProfile> LoadUserProfiles()
+        //{
+        //    StringBuilder query = new StringBuilder();
+        //    query.Append("SELECT user_id, user_name, password, role, full_name FROM user_profile;");
+        //    List<UserProfile> userList = new List<UserProfile>();
 
-            try
-            {
-                using (DbService db = new DbService(config))
-                {
-                    MySqlCommand cmd = db.GetMySqlCommand(query.ToString());
-                    using (var dataReader = cmd.ExecuteReader())
-                    {
-                        if (dataReader.HasRows)
-                        {
-                            int index = 1;
-                            while (dataReader.Read())
-                            {
-                                UserProfile userProfile = new UserProfile
-                                {
-                                    No = index++,
-                                    UserId = Convert.ToInt32(dataReader["user_id"]),
-                                    UserName = dataReader.GetString("user_name"),
-                                    PassWord = dataReader.GetString("password"),
-                                    Role = dataReader.GetString("role"),
-                                    FullName = dataReader.GetString("full_name"),
-                                };
+        //    try
+        //    {
+        //        using (DbService db = new DbService(config))
+        //        {
+        //            MySqlCommand cmd = db.GetMySqlCommand(query.ToString());
+        //            using (var dataReader = cmd.ExecuteReader())
+        //            {
+        //                if (dataReader.HasRows)
+        //                {
+        //                    int index = 1;
+        //                    while (dataReader.Read())
+        //                    {
+        //                        UserProfile userProfile = new UserProfile
+        //                        {
+        //                            No = index++,
+        //                            UserId = Convert.ToInt32(dataReader["user_id"]),
+        //                            UserName = dataReader.GetString("user_name"),
+        //                            PassWord = dataReader.GetString("password"),
+        //                            Role = dataReader.GetString("role"),
+        //                            FullName = dataReader.GetString("full_name"),
+        //                        };
 
-                                userList.Add(userProfile);
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("No data found.");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-            return userList;
-        }
+        //                        userList.Add(userProfile);
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    Console.WriteLine("No data found.");
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"An error occurred: {ex.Message}");
+        //    }
+        //    return userList;
+        //}
 
         public void AddUser(string userName, string password, string role, string fullName)
         {
@@ -168,7 +167,6 @@ namespace Machine_Performance_Management.Admin
                 }
             }
         }
-#endregion
 
 
     }

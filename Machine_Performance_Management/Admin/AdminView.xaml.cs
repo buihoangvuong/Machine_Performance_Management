@@ -21,11 +21,11 @@ namespace Machine_Performance_Management.Admin
         public AdminView(string fullname)
         {
             InitializeComponent();
-            adminViewModel = new AdminViewModel(fullname)
-            {
-                Fullname = fullname
-            };
-            DataContext = adminViewModel;
+            //adminViewModel = new AdminViewModel(fullname)
+            //{
+            //    Fullname = fullname
+            //};
+            //DataContext = adminViewModel;
         }
 
         private void OperationDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -33,5 +33,4 @@ namespace Machine_Performance_Management.Admin
 
         }
     }
-}
 }

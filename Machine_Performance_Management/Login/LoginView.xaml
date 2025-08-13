@@ -8,6 +8,7 @@
         d:DataContext="{d:DesignInstance Type=viewmodels:LoginViewModel}"
         mc:Ignorable="d" Height="370" Width="550"
         FocusManager.FocusedElement="{Binding ElementName=UsernameTextBox}"
+        Title="Login"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
     <Window.Resources>
