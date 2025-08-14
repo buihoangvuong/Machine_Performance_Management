@@ -23,4 +23,32 @@ namespace Machine_Performance_Management.Common
         public string Role { get; set; }
         public string FullName { get; set; }
     }
+
+    public class FactoryInfo
+    {
+        public int No { get; set; }
+
+        public int Factory_id { get; set; }
+
+        public string FactoryName { get; set; }
+
+        public string Description { get; set; }
+
+        public string Fullname { get; set; }
+
+        public string EventTime { get; set; }
+    }
+
+    public class Device_Type
+    {
+        public int NO { get; set; }
+        public int id { get; set; }
+        public string Device_Name { get; set; }
+        public string Device_type { get; set; }
+        public string Description { get; set; }
+        public string Factory { get; set; }
+        public string Event_User { get; set; }
+        public string Event_Time { get; set; }
+
+    }
 }
