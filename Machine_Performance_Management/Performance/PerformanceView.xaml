@@ -15,26 +15,47 @@
 
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="7*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2.5*"/>
+                <ColumnDefinition Width="2.5*"/>
+                <ColumnDefinition Width="2.5*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <DockPanel>
+            <DockPanel Grid.Column="0" HorizontalAlignment="Left" Margin="20">
                 <TextBlock
-                Grid.Column="0"
-                Text="Month:"
+                Text="Factory:"
                 FontWeight="Bold"
-                Height="24" Width="93"/>
-                
+                Height="25" Width="100"/>
+
                 <ComboBox
-                Grid.Column="0"
-                Height="24" Width="93"/>
+                Height="25" Width="100"/>
             </DockPanel>
 
-            <Button Grid.Column="1"
+            <DockPanel Grid.Column="1" HorizontalAlignment="Left">
+                <TextBlock
+                Text="Month:"
+                FontWeight="Bold"
+                Height="25" Width="100"/>
+
+                <ComboBox
+                Height="25" Width="100"/>
+            </DockPanel>
+
+            <DockPanel Grid.Column="2" HorizontalAlignment="Left">
+                <TextBlock
+                Text="Year:"
+                FontWeight="Bold"
+                Height="25" Width="100"/>
+
+                <ComboBox
+                Height="25" Width="100"/>
+            </DockPanel>
+            
+            <Button Grid.Column="3"
                     HorizontalAlignment="Left"
                     Command="{Binding ImportCommand}"
-                    Content="📥 Import"/>
+                    Content="📥 Import" 
+                     Height="25" Width="100"/>
         </Grid>
 
         <DataGrid Grid.Row="1" x:Name="MyDataGrid"
