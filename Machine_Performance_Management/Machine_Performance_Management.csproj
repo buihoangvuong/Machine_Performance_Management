@@ -174,9 +174,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Main\MainWindowViewModel.cs" />
+    <Compile Include="Performance\PerformanceModel.cs" />
     <Compile Include="Performance\PerformanceView.xaml.cs">
       <DependentUpon>PerformanceView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Performance\PerformanceViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

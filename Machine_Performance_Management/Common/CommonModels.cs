@@ -24,6 +24,40 @@ namespace Machine_Performance_Management.Common
         public string FullName { get; set; }
     }
 
+    public class DevicePerformance
+    {
+        public int NO { get; set; }
+        public string Factory { get; set; }
+        public string Machine_Name { get; set; }
+
+        // Hiệu suất (%)
+        public Dictionary<string, double> DailyPerformance { get; set; }
+            = new Dictionary<string, double>();
+
+        // Chỉ tiêu (capa/일)
+        public Dictionary<string, double> Performance_Target { get; set; }
+            = new Dictionary<string, double>();
+
+        // Thực tế (생산량)
+        public Dictionary<string, double> Performance_Completed { get; set; }
+            = new Dictionary<string, double>();
+
+        public Dictionary<string, string> Reason { get; set; }
+    = new Dictionary<string, string>();
+        public double AveragePerformance
+        {
+            get
+            {
+                if (DailyPerformance == null || DailyPerformance.Count == 0)
+                    return 0;
+                return DailyPerformance.Values.Average();
+            }
+        }
+
+        //public string Performance_Taget { get; set; }
+        //public string Performance_Completed { get; set; }
+    }
+
     public class FactoryInfo
     {
         public int No { get; set; }
