@@ -476,13 +476,13 @@
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
                                         </DataGridTemplateColumn>
-                                        <DataGridTemplateColumn Header="Event time" Width="*">
+                                        <!--<DataGridTemplateColumn Header="Event time" Width="*">
                                             <DataGridTemplateColumn.CellTemplate>
                                                 <DataTemplate>
                                                     <TextBlock Text="{Binding EventTime}" TextWrapping="Wrap"/>
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellTemplate>
-                                        </DataGridTemplateColumn>
+                                        </DataGridTemplateColumn>-->
                                         <!--<DataGridTextColumn Header="Event time" Binding="{Binding EventTime, StringFormat='yyyy/MM/dd '}" Width="*" />-->
 
                                     </DataGrid.Columns>
@@ -731,14 +731,14 @@
                                             </DataGridTextColumn.ElementStyle>
                                         </DataGridTextColumn>
 
-                                        <DataGridTextColumn Header="Even Time" Binding="{Binding Event_Time}" Width="*" >
+                                        <!--<DataGridTextColumn Header="Even Time" Binding="{Binding Event_Time}" Width="*" >
                                             <DataGridTextColumn.ElementStyle>
                                                 <Style TargetType="TextBlock">
                                                     <Setter Property="TextWrapping" Value="Wrap" />
                                                     <Setter Property="VerticalAlignment" Value="Center"/>
                                                 </Style>
                                             </DataGridTextColumn.ElementStyle>
-                                        </DataGridTextColumn>
+                                        </DataGridTextColumn>-->
 
                                     </DataGrid.Columns>
                                 </DataGrid>

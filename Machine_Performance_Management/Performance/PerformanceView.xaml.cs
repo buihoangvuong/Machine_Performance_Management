@@ -133,7 +133,7 @@ namespace Machine_Performance_Management.Performance
                         string reason = device.Reason[dateHeader];
 
                         MessageBox.Show(
-                            $"📅 Ngày: {dateHeader}\n🎯 Target: {target}\n✅ Completed: {completed}\n🕒 Reason: {reason}",
+                            $"📅 Date: {dateHeader}\n🎯 Target: {target}\n✅ Completed: {completed}\n🕒 Reason: {reason}",
                             "Thông tin chi tiết",
                             MessageBoxButton.OK,
                             MessageBoxImage.Information
