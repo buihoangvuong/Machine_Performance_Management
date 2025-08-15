@@ -76,8 +76,8 @@ namespace Machine_Performance_Management.Performance
                         return;
                     }
 
-					//PerFormanceData.InsertToDatabase(dataList, UserName);
-					PerFormanceData.Clear();
+					PerFormanceData.InsertToDatabase(dataList, UserName);
+                    PerFormanceData.Clear();
 					foreach (var item in dataList)
 					{
 						PerFormanceData.Add(item);
