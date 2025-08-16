@@ -22,10 +22,11 @@ namespace Machine_Performance_Management.Performance
 	public partial class PerformanceView : UserControl
 	{
 		protected readonly PerformanceViewModel viewModel = new PerformanceViewModel();
-		public PerformanceView()
+		public PerformanceView(string fullname)
 		{
 			InitializeComponent();
-			DataContext = viewModel;
+            viewModel = new PerformanceViewModel(fullname);
+            DataContext = viewModel;
             viewModel.ImportCompleted += OnImportCompleted;
         }
 

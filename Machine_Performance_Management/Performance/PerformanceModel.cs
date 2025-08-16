@@ -1,5 +1,6 @@
 ﻿using Machine_Performance_Management.Common;
 using Machine_Performance_Management.Extension;
+
 using MySqlConnector;
 using OfficeOpenXml;
 using System;
@@ -100,7 +101,7 @@ namespace Machine_Performance_Management.Performance
             return result;
         }
 
-        public void InsertToDatabase(List<DevicePerformance1> dataList)
+        public void InsertToDatabase(List<DevicePerformance1> dataList, string fullname)
         {
             using (DbService db = new DbService(config))
             {
@@ -108,9 +109,9 @@ namespace Machine_Performance_Management.Performance
                 {
                     var queryInsert = @"
                 INSERT INTO machine_performance 
-                (date, factory, device_name, qty_taget, qty_completed, daily_performance, reason) 
+                (date, factory, device_name, qty_taget, qty_completed, daily_performance, reason, event_user) 
                 VALUES 
-                (@date, @factory, @device_name, @qty_taget, @qty_completed, @daily_performance, @reason)";
+                (@date, @factory, @device_name, @qty_taget, @qty_completed, @daily_performance, @reason, @even_user )";
 
                     var parametersInsert = new List<MySqlParameter>
             {
@@ -121,6 +122,7 @@ namespace Machine_Performance_Management.Performance
                 new MySqlParameter("@qty_completed", item.Performance_Completed),
                 new MySqlParameter("@daily_performance", item.DailyPerformance),
                 new MySqlParameter("@reason", item.Reason ?? (object)DBNull.Value),
+                new MySqlParameter("@even_user", fullname ?? (object)DBNull.Value),
             };
 
                     db.ExecuteQuery(queryInsert, parametersInsert);

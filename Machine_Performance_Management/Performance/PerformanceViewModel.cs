@@ -31,6 +31,21 @@ namespace Machine_Performance_Management.Performance
                 OnPropertyChanged(nameof(PerFormanceData));
             }
         }
+        public PerformanceViewModel(string fullname)
+        {
+            Fullname = fullname;
+            PerFormanceData = new ObservableCollection<DevicePerformance>();
+        }
+        private string fullname;
+        public string Fullname
+        {
+            get => fullname;
+            set
+            {
+                fullname = value;
+                OnPropertyChanged(nameof(Fullname));
+            }
+        }
         public List<string> Dates { get; set; } = new List<string>(); // Danh sách ngày để tạo cột
 
         public event Action ImportCompleted;
@@ -76,19 +91,25 @@ namespace Machine_Performance_Management.Performance
                         return;
                     }
 
-                    var insertList = dataList.Select(d => new DevicePerformance1
+                    var insertList = new List<DevicePerformance1>();
+                    foreach (var d in dataList)
                     {
-                        Date= d.Date,
-                        Factory = d.Factory,
-                        Machine_Name = d.Machine_Name,
-                        DailyPerformance = d.DailyPerformance.Values.FirstOrDefault(),
-                        Performance_Target = d.Performance_Target.Values.FirstOrDefault(),
-                        Performance_Completed = d.Performance_Completed.Values.FirstOrDefault(),
-                        Reason = d.Reason.Values.FirstOrDefault()
+                        foreach (var date in d.DailyPerformance.Keys)
+                        {
+                            insertList.Add(new DevicePerformance1
+                            {
+                                Date = date,
+                                Factory = d.Factory,
+                                Machine_Name = d.Machine_Name,
+                                DailyPerformance = d.DailyPerformance.ContainsKey(date) ? d.DailyPerformance[date] : 0,
+                                Performance_Target = d.Performance_Target.ContainsKey(date) ? d.Performance_Target[date] : 0,
+                                Performance_Completed = d.Performance_Completed.ContainsKey(date) ? d.Performance_Completed[date] : 0,
+                                Reason = d.Reason.ContainsKey(date) ? d.Reason[date] : null
+                            });
+                        }
+                    }
 
-                    }).ToList();
-
-                    performanceModel.InsertToDatabase(insertList);
+                    performanceModel.InsertToDatabase(insertList, Fullname);
                     PerFormanceData.Clear();
 					foreach (var item in dataList)
 					{

@@ -109,7 +109,7 @@ namespace Machine_Performance_Management.Main
 
         public void MenuPerformance()
         {
-            CurrentView = new PerformanceView();
+            CurrentView = new PerformanceView(FullName);
             SelectedMenuItem = "Performance";
         }
 
