@@ -1,4 +1,6 @@
 ﻿using Machine_Performance_Management.Common;
+using Machine_Performance_Management.Extension;
+using MySqlConnector;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,13 @@ namespace Machine_Performance_Management.Performance
 {
 	public class PerformanceModel
 	{
+        protected LocalConfigTable config;
+        
+        public PerformanceModel()
+        {
+            IniService ini = new IniService();
+            config = ini.GetLocalConfig();
+        }
         public List<DevicePerformance> ReadExcelData(string filePath)
         {
             var result = new List<DevicePerformance>();
@@ -87,7 +96,7 @@ namespace Machine_Performance_Management.Performance
 
                                 perf.Reason[dateHeader] = worksheet.Cells[row, col + 5].Text;
                             }
-
+                            Console.WriteLine(result);
                             result.Add(perf);
                         }
                     }
@@ -101,5 +110,54 @@ namespace Machine_Performance_Management.Performance
             return result;
         }
 
+        public void InsertToDatabase(List<Device_Type> dataList, string user)
+        {
+            using (DbService db = new DbService(config))
+            {
+                foreach (var item in dataList)
+                {
+                    // 1. Kiểm tra nếu đã tồn tại thì bỏ qua
+                    var queryCheck = @"
+                SELECT COUNT(*) FROM device_type 
+                WHERE device_type = @device_type AND 
+                      device_name = @device_name AND 
+                      description = @description AND 
+                      factory = @factory";
+
+                    var parametersCheck = new List<MySqlParameter>
+            {
+                new MySqlParameter("@device_type", item.Device_type ?? (object)DBNull.Value),
+                new MySqlParameter("@device_name", item.Device_Name ?? (object)DBNull.Value),
+                new MySqlParameter("@description", item.Description ?? (object)DBNull.Value),
+                new MySqlParameter("@factory", item.Factory ?? (object)DBNull.Value),
+            };
+
+                    int count = db.ExecuteScalar(queryCheck, parametersCheck);
+                    if (count > 0)
+                    {
+                        continue; // Bỏ qua nếu bản ghi đã tồn tại
+                    }
+
+                    // 2. Insert bản ghi mới
+                    var queryInsert = @"
+                INSERT INTO device_type 
+                (device_type, device_name, description, factory, event_user, event_time) 
+                VALUES 
+                (@device_type, @device_name, @description, @factory, @event_user, @event_time)";
+
+                    var parametersInsert = new List<MySqlParameter>
+            {
+                new MySqlParameter("@device_type", item.Device_type ?? (object)DBNull.Value),
+                new MySqlParameter("@device_name", item.Device_Name ?? (object)DBNull.Value),
+                new MySqlParameter("@description", item.Description ?? (object)DBNull.Value),
+                new MySqlParameter("@factory", item.Factory ?? (object)DBNull.Value),
+                new MySqlParameter("@event_user", user ?? (object)DBNull.Value),
+                new MySqlParameter("@event_time", DateTime.Now)
+            };
+
+                    db.ExecuteQuery(queryInsert, parametersInsert);
+                }
+            }
+        }
     }
 }
