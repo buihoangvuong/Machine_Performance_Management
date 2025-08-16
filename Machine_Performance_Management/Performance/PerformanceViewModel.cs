@@ -87,7 +87,6 @@ namespace Machine_Performance_Management.Performance
                     .Distinct()
                     .OrderBy(d => d)
                     .ToList();
-                    //LoadDataManagementData();
                     ImportCompleted?.Invoke();
 
                     MessageBox.Show("Import thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -98,21 +97,5 @@ namespace Machine_Performance_Management.Performance
                 }
             }
         }
-
-        //public void LoadData(List<DevicePerformance> data)
-        //{
-        //    PerFormanceData.Clear();
-        //    Dates.Clear();
-
-        //    foreach (var item in data)
-        //    {
-        //        foreach (var day in item.DailyPerformance.Keys)
-        //        {
-        //            if (!Dates.Contains(day))
-        //                Dates.Add(day);
-        //        }
-        //        PerFormanceData.Add(item);
-        //    }
-        //}
 	}
 }
