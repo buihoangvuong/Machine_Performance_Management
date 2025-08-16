@@ -76,7 +76,19 @@ namespace Machine_Performance_Management.Performance
                         return;
                     }
 
-					//PerFormanceData.InsertToDatabase(dataList, UserName);
+                    var insertList = dataList.Select(d => new DevicePerformance1
+                    {
+                        Date= d.Date,
+                        Factory = d.Factory,
+                        Machine_Name = d.Machine_Name,
+                        DailyPerformance = d.DailyPerformance.Values.FirstOrDefault(),
+                        Performance_Target = d.Performance_Target.Values.FirstOrDefault(),
+                        Performance_Completed = d.Performance_Completed.Values.FirstOrDefault(),
+                        Reason = d.Reason.Values.FirstOrDefault()
+
+                    }).ToList();
+
+                    performanceModel.InsertToDatabase(insertList);
                     PerFormanceData.Clear();
 					foreach (var item in dataList)
 					{

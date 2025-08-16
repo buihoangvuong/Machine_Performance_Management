@@ -27,6 +27,7 @@ namespace Machine_Performance_Management.Common
     public class DevicePerformance
     {
         public int NO { get; set; }
+        public string Date { get; set; }
         public string Factory { get; set; }
         public string Machine_Name { get; set; }
 
@@ -57,7 +58,24 @@ namespace Machine_Performance_Management.Common
         //public string Performance_Taget { get; set; }
         //public string Performance_Completed { get; set; }
     }
+    public class DevicePerformance1
+    {
+        public int NO { get; set; }
+        public string Date { get; set; }
+        public string Factory { get; set; }
+        public string Machine_Name { get; set; }
 
+        // Hiệu suất (%)
+        public double DailyPerformance { get; set; }
+
+        // Chỉ tiêu (capa/일)
+        public double Performance_Target { get; set; }
+
+        // Thực tế (생산량)
+        public double Performance_Completed { get; set; }
+
+        public string Reason { get; set; }
+    }
     public class FactoryInfo
     {
         public int No { get; set; }
