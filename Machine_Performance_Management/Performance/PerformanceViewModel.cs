@@ -35,6 +35,8 @@ namespace Machine_Performance_Management.Performance
         {
             Fullname = fullname;
             PerFormanceData = new ObservableCollection<DevicePerformance>();
+            LoadFactoryItems();
+            LoadData();
         }
         private string fullname;
         public string Fullname
@@ -48,6 +50,27 @@ namespace Machine_Performance_Management.Performance
         }
         public List<string> Dates { get; set; } = new List<string>(); // Danh sách ngày để tạo cột
 
+        private ObservableCollection<string> _factoryitemDataManagement = new ObservableCollection<string>();
+        public ObservableCollection<string> FactoryitemDataManagement
+        {
+            get => _factoryitemDataManagement;
+            set
+            {
+                _factoryitemDataManagement = value;
+                OnPropertyChanged(nameof(FactoryitemDataManagement));
+            }
+        }
+        public ObservableCollection<DevicePerformance1> _dataManagement { get; set; } = new ObservableCollection<DevicePerformance1>();
+
+        public ObservableCollection<DevicePerformance1> DataManagement
+        {
+            get => _dataManagement;
+            set
+            {
+                _dataManagement = value;
+                OnPropertyChanged("DataManagement");
+            }
+        }
         public event Action ImportCompleted;
 
         private ICommand clickButtonImportCommand;
@@ -132,6 +155,53 @@ namespace Machine_Performance_Management.Performance
             }
         }
 
+        public void LoadFactoryItems()
+        {
+            FactoryitemDataManagement.Clear();
+            var list = performanceModel.GetFactoryList();
+
+            foreach (var item in list)
+            {
+                FactoryitemDataManagement.Add(item);
+            }
+
+            FactoryitemDataManagement.Insert(0, "All");
+            if (FactoryitemDataManagement.Count > 0)
+            SelectedFactoryItemDataManagement = FactoryitemDataManagement[0];
+
+            //SelectedFactoryItemDataManagement = Factoryitem[0];
+
+        }
+        private string _selectedFactoryItemDataManagement;
+        public string SelectedFactoryItemDataManagement
+        {
+            get => _selectedFactoryItemDataManagement;
+            set
+            {
+                if (_selectedFactoryItemDataManagement != value)
+                {
+                    _selectedFactoryItemDataManagement = value;
+
+                    OnPropertyChanged(nameof(SelectedFactoryItemDataManagement));
+                    LoadData();
+
+                }
+
+            }
+        }
+
+        public void LoadData()
+        {
+            var data = performanceModel.LoadPerformanceMachineList(SelectedFactoryItemDataManagement);
+            PerFormanceData = new ObservableCollection<DevicePerformance>(data);
+            DateHeaders = data
+           .SelectMany(d => d.DailyPerformance.Keys)
+           .Distinct()
+           .OrderBy(d => d)
+           .ToList();
+            ImportCompleted?.Invoke();
+        }
+
         //public void LoadData(List<DevicePerformance> data)
         //{
         //    PerFormanceData.Clear();
@@ -147,5 +217,5 @@ namespace Machine_Performance_Management.Performance
         //        PerFormanceData.Add(item);
         //    }
         //}
-	}
+    }
 }

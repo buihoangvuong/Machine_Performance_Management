@@ -28,7 +28,10 @@
                 Height="25" Width="100"/>
 
                 <ComboBox
-                Height="25" Width="100"/>
+                Height="25" Width="100"
+                ItemsSource="{Binding FactoryitemDataManagement}"
+                SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}"
+                    />
             </DockPanel>
 
             <DockPanel Grid.Column="1" HorizontalAlignment="Left">

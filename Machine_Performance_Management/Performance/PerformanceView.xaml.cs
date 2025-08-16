@@ -28,8 +28,20 @@ namespace Machine_Performance_Management.Performance
             viewModel = new PerformanceViewModel(fullname);
             DataContext = viewModel;
             viewModel.ImportCompleted += OnImportCompleted;
+            viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            this.Loaded += PerformanceView_Loaded;
         }
-
+        private void PerformanceView_Loaded(object sender, RoutedEventArgs e)
+        {
+            AddDynamicDateColumns(MyDataGrid, viewModel.DateHeaders);
+        }
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(viewModel.DateHeaders))
+            {
+                AddDynamicDateColumns(MyDataGrid, viewModel.DateHeaders);
+            }
+        }
         private void AddDynamicDateColumns(DataGrid dataGrid, List<string> dates)
         {
             if (dates == null || dates.Count == 0)

@@ -54,16 +54,6 @@ namespace Machine_Performance_Management.Common
                 return DailyPerformance.Values.Average();
             }
         }
-
-        public double DailyPerformance1 { get; set; }
-
-        // Chỉ tiêu (capa/일)
-        public double Performance_Target1 { get; set; }
-
-        // Thực tế (생산량)
-        public double Performance_Completed1 { get; set; }
-
-        public string Reason1 { get; set; }
     }
     public class DevicePerformance1
     {

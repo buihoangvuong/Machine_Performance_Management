@@ -130,5 +130,165 @@ namespace Machine_Performance_Management.Performance
             }
         }
 
+        public List<string> GetFactoryList()
+        {
+            var factoryList = new List<string>();
+
+            try
+            {
+                using (DbService db = new DbService(config))
+                {
+                    StringBuilder query = new StringBuilder();
+                    query.Append("SELECT DISTINCT factory FROM machine_performance");
+
+                    var cmd = db.GetMySqlCommand(query.ToString());
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            factoryList.Add(reader["factory"]?.ToString());
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] : {ex.Message}");
+            }
+
+            return factoryList;
+        }
+
+        public List<string> LoadDeviceTypeList(string factory)
+        {
+            var deviceTypes = new List<string>();
+
+            try
+            {
+                using (DbService db = new DbService(config))
+                {
+                    StringBuilder query = new StringBuilder();
+
+                    if (factory == "All")
+                        query.Append("SELECT DISTINCT device_type FROM history");
+                    else
+                    {
+                        //query.Append("SELECT DISTINCT device_type FROM history WHERE factory = @factory");
+                    }
+
+                    var cmd = db.GetMySqlCommand(query.ToString());
+
+                    if (factory != "All")
+                        cmd.Parameters.AddWithValue("@factory", factory);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            deviceTypes.Add(reader["device_type"]?.ToString());
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] LoadDeviceTypeList: {ex.Message}");
+            }
+
+            return deviceTypes;
+        }
+
+        public List<DevicePerformance> LoadPerformanceMachineList(string factory)
+        {
+            var result = new List<DevicePerformance>();
+            var deviceDict = new Dictionary<string, DevicePerformance>();
+            var dateList = new List<string>();
+
+            StringBuilder query = new StringBuilder("SELECT * FROM machine_performance");
+            List<string> conditions = new List<string>();
+            if (!string.IsNullOrWhiteSpace(factory) && factory != "All")
+                conditions.Add("factory = @factory");
+
+            if (conditions.Any())
+                query.Append(" WHERE " + string.Join(" AND ", conditions));
+            query.Append(" ORDER BY device_name, date");
+
+            try
+            {
+                using (DbService db = new DbService(config))
+                {
+                    MySqlCommand cmd = db.GetMySqlCommand(query.ToString());
+                    if (!string.IsNullOrWhiteSpace(factory) && factory != "All")
+                        cmd.Parameters.AddWithValue("@factory", factory);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string deviceName = reader["device_name"]?.ToString();
+                            string factoryName = reader["factory"]?.ToString();
+                            string date = reader["date"]?.ToString();
+
+                            double dailyPerformance = reader["daily_performance"] != DBNull.Value ? Convert.ToDouble(reader["daily_performance"]) : 0;
+                            double performanceTarget = reader["qty_taget"] != DBNull.Value ? Convert.ToDouble(reader["qty_taget"]) : 0;
+                            double performanceCompleted = reader["qty_completed"] != DBNull.Value ? Convert.ToDouble(reader["qty_completed"]) : 0;
+                            string reason = reader["reason"]?.ToString();
+
+                            if (!dateList.Contains(date))
+                                dateList.Add(date);
+
+                            string key = $"{factoryName}_{deviceName}";
+                            if (!deviceDict.ContainsKey(key))
+                            {
+                                deviceDict[key] = new DevicePerformance
+                                {
+                                    Factory = factoryName,
+                                    Machine_Name = deviceName,
+                                    DailyPerformance = new Dictionary<string, double>(),
+                                    Performance_Target = new Dictionary<string, double>(),
+                                    Performance_Completed = new Dictionary<string, double>(),
+                                    Reason = new Dictionary<string, string>()
+                                };
+                            }
+                            deviceDict[key].DailyPerformance[date] = dailyPerformance;
+                            deviceDict[key].Performance_Target[date] = performanceTarget;
+                            deviceDict[key].Performance_Completed[date] = performanceCompleted;
+                            deviceDict[key].Reason[date] = reason;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] Load list machine performance failed: {ex.Message}");
+            }
+
+            int no = 1;
+            foreach (var item in deviceDict.Values)
+            {
+                item.NO = no++;
+                // Đảm bảo đủ các ngày, nếu thiếu thì để 0 hoặc null
+                foreach (var date in dateList)
+                {
+                    if (!item.DailyPerformance.ContainsKey(date))
+                        item.DailyPerformance[date] = 0;
+                    if (!item.Performance_Target.ContainsKey(date))
+                        item.Performance_Target[date] = 0;
+                    if (!item.Performance_Completed.ContainsKey(date))
+                        item.Performance_Completed[date] = 0;
+                    if (!item.Reason.ContainsKey(date))
+                        item.Reason[date] = string.Empty;
+                }
+                result.Add(item);
+            }
+
+            // Sắp xếp lại theo tên máy
+            result = result.OrderBy(x => x.Machine_Name).ToList();
+
+            return result;
+        }
+
+
     }
 }
