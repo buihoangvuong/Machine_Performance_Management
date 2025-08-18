@@ -37,7 +37,11 @@ namespace Machine_Performance_Management.Performance
             PerFormanceData = new ObservableCollection<DevicePerformance>();
             LoadFactoryItems();
             LoadData();
+            LoadMonths();
         }
+
+        public List<string> Months { get; set; }
+
         private string fullname;
         public string Fullname
         {
@@ -173,6 +177,7 @@ namespace Machine_Performance_Management.Performance
 
         }
         private string _selectedFactoryItemDataManagement;
+
         public string SelectedFactoryItemDataManagement
         {
             get => _selectedFactoryItemDataManagement;
@@ -190,9 +195,32 @@ namespace Machine_Performance_Management.Performance
             }
         }
 
+        private void LoadMonths()
+        {
+            Months = Enumerable.Range(1, 12)
+                .Select(i => i.ToString("D2"))
+                .ToList();
+            Months.Insert(0, "All");
+            SelectedMonth = Months[0];
+            OnPropertyChanged(nameof(Months));
+        }
+        private string _selectedMonth;
+        public string SelectedMonth
+        {
+            get => _selectedMonth;
+            set
+            {
+                if (_selectedMonth != value)
+                {
+                    _selectedMonth = value;
+                    OnPropertyChanged(nameof(SelectedMonth));
+                    LoadData();
+                }
+            }
+        }
         public void LoadData()
         {
-            var data = performanceModel.LoadPerformanceMachineList(SelectedFactoryItemDataManagement);
+            var data = performanceModel.LoadPerformanceMachineList(SelectedFactoryItemDataManagement, SelectedMonth);
             PerFormanceData = new ObservableCollection<DevicePerformance>(data);
             DateHeaders = data
            .SelectMany(d => d.DailyPerformance.Keys)

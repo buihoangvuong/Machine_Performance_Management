@@ -199,7 +199,7 @@ namespace Machine_Performance_Management.Performance
             return deviceTypes;
         }
 
-        public List<DevicePerformance> LoadPerformanceMachineList(string factory)
+        public List<DevicePerformance> LoadPerformanceMachineList(string factory, string month)
         {
             var result = new List<DevicePerformance>();
             var deviceDict = new Dictionary<string, DevicePerformance>();
@@ -209,6 +209,9 @@ namespace Machine_Performance_Management.Performance
             List<string> conditions = new List<string>();
             if (!string.IsNullOrWhiteSpace(factory) && factory != "All")
                 conditions.Add("factory = @factory");
+            if (!string.IsNullOrWhiteSpace(month) && month != "All")
+                // Lấy phần tháng sau dấu '/' trong chuỗi ngày
+                conditions.Add("SUBSTRING_INDEX(date, '.', -1) = @month");
 
             if (conditions.Any())
                 query.Append(" WHERE " + string.Join(" AND ", conditions));
@@ -221,6 +224,8 @@ namespace Machine_Performance_Management.Performance
                     MySqlCommand cmd = db.GetMySqlCommand(query.ToString());
                     if (!string.IsNullOrWhiteSpace(factory) && factory != "All")
                         cmd.Parameters.AddWithValue("@factory", factory);
+                    if (!string.IsNullOrWhiteSpace(month) && month != "All")
+                        cmd.Parameters.AddWithValue("@month", month.PadLeft(2, '0')); 
 
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -268,7 +273,6 @@ namespace Machine_Performance_Management.Performance
             foreach (var item in deviceDict.Values)
             {
                 item.NO = no++;
-                // Đảm bảo đủ các ngày, nếu thiếu thì để 0 hoặc null
                 foreach (var date in dateList)
                 {
                     if (!item.DailyPerformance.ContainsKey(date))
@@ -283,12 +287,69 @@ namespace Machine_Performance_Management.Performance
                 result.Add(item);
             }
 
-            // Sắp xếp lại theo tên máy
             result = result.OrderBy(x => x.Machine_Name).ToList();
 
             return result;
         }
+        public List<int> GetMonth(string device_type, string year)
+        {
+            var result = new List<int>(new int[12]); // 12 tháng
 
+            try
+            {
+                using (var db = new DbService(config))
+                {
+                    string yearFilter = "";
+                    if (year == "All")
+                    {
+                        year = "";
+                    }
+                    else
+                    {
+                        yearFilter = "AND YEAR(event_time) = @year";
+                    }
+                    string query = $@"
+                SELECT 
+                    MONTH(event_time) AS month,
+                    SUM(total_price_repair + total_price_waranty) AS total
+                FROM history
+                WHERE 
+                    device_type = @device_type
+                    {yearFilter}
+                GROUP BY MONTH(event_time)
+                ORDER BY month;";
+
+                    using (var cmd = db.GetMySqlCommand(query) as MySqlCommand)
+                    {
+                        cmd.Parameters.AddWithValue("@device_type", device_type);
+                        if (!string.IsNullOrEmpty(year))
+                        {
+                            cmd.Parameters.AddWithValue("@year", Convert.ToInt32(year));
+                        }
+
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int month = Convert.ToInt32(reader["month"]);
+                                int total = reader.IsDBNull(reader.GetOrdinal("total")) ? 0 : Convert.ToInt32(reader["total"]);
+
+                                if (month >= 1 && month <= 12)
+                                {
+                                    result[month - 1] = total; // Tháng 1 nằm ở index 0
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Lỗi khi tính tổng: {ex.Message}");
+            }
+
+            return result;
+        }
 
     }
 }

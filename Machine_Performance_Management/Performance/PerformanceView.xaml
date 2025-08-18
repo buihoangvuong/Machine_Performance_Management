@@ -41,6 +41,8 @@
                 Height="25" Width="100"/>
 
                 <ComboBox
+                     ItemsSource="{Binding Months}"
+                    SelectedItem="{Binding SelectedMonth, Mode=TwoWay}"
                 Height="25" Width="100"/>
             </DockPanel>
 
