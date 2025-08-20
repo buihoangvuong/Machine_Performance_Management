@@ -19,14 +19,15 @@
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
                 <Border>
-                    <Menu FontSize="20" FontFamily="Segoe UI" Foreground="White" BorderBrush="#FF264376" Height="70" VerticalAlignment="Center" FontWeight="Bold">
+                    <Menu FontSize="20" FontFamily="Segoe UI" Foreground="White" BorderBrush="#FF264376" 
+                          Height="70" VerticalAlignment="Center" FontWeight="Bold">
                         <Menu.Background>
                             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                 <GradientStop Color="#FF264376" Offset="0.0"/>
                                 <GradientStop Color="#FF3C5F8C" Offset="1.0"/>
                             </LinearGradientBrush>
                         </Menu.Background>
-                        
+
                         <MenuItem  Header="🏠 HOME" Command="{Binding ClickHome}" Height="70">
                             <MenuItem.Style>
                                 <Style TargetType="MenuItem">
@@ -49,7 +50,9 @@
                                                     </LinearGradientBrush>
                                                 </Setter.Value>
                                             </Setter>
-                                            <!-- Màu khi được chọn -->
+                                            
+                        <!-- Màu khi được chọn -->
+                        
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -78,7 +81,7 @@
                                                     </LinearGradientBrush>
                                                 </Setter.Value>
                                             </Setter>
-                                            <!-- Màu khi được chọn -->
+                                             <!--Màu khi được chọn--> 
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -107,7 +110,9 @@
                                                     </LinearGradientBrush>
                                                 </Setter.Value>
                                             </Setter>
-                                            <!-- Màu khi được chọn -->
+                                            
+                        <!-- Màu khi được chọn -->
+                        
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>

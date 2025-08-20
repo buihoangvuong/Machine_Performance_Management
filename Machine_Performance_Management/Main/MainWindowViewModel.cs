@@ -3,19 +3,13 @@ using CommunityToolkit.Mvvm.Input;
 using Machine_Performance_Management.Admin;
 using Machine_Performance_Management.Home;
 using Machine_Performance_Management.Performance;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 namespace Machine_Performance_Management.Main
 {
-    public class MainWindowViewModel : ObservableObject
+	public class MainWindowViewModel : ObservableObject
     {
-
-        private bool _showUserStaff;
+		#region khai báo
+		private bool _showUserStaff;
         private bool _showUserManager;
         public bool ShowUserStaff
         {
@@ -80,7 +74,9 @@ namespace Machine_Performance_Management.Main
                 OnPropertyChanged("Role");
             }
         }
-        private ICommand _clickHome;
+		#endregion
+
+		private ICommand _clickHome;
         public ICommand ClickHome => _clickHome ?? (_clickHome = new RelayCommand(MenuHome));
 
         private ICommand _clickPerformance;
@@ -109,15 +105,15 @@ namespace Machine_Performance_Management.Main
 
         public void MenuPerformance()
         {
-            CurrentView = new PerformanceView();
+            CurrentView = new PerformanceView(FullName);
             SelectedMenuItem = "Performance";
         }
 
         public void MenuAdmin()
         {
-            CurrentView = new AdminView(FullName);
-            SelectedMenuItem = "Admin";
-        }
+			CurrentView = new AdminView(FullName);
+			SelectedMenuItem = "Admin";
+		}
 
     }
         

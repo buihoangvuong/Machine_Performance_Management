@@ -1,5 +1,6 @@
 ﻿using MySqlConnector;
 using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace Machine_Performance_Management.Extension
@@ -94,6 +95,32 @@ namespace Machine_Performance_Management.Extension
         public MySqlConnection GetConnection()
         {
             return mysqlConnection;
+        }
+
+        public int ExecuteScalar(string query, List<MySqlParameter> parameters)
+        {
+            using (var cmd = new MySqlCommand(query, mysqlConnection))
+            {
+                if (parameters != null)
+                {
+                    cmd.Parameters.AddRange(parameters.ToArray());
+                }
+
+                object result = cmd.ExecuteScalar();
+                return result != null && result != DBNull.Value ? Convert.ToInt32(result) : 0;
+            }
+        }
+
+        public void ExecuteQuery(string query, List<MySqlParameter> parameters)
+        {
+            using (var cmd = new MySqlCommand(query, mysqlConnection))
+            {
+                // Thêm tham số vào lệnh SQL
+                cmd.Parameters.AddRange(parameters.ToArray());
+
+                // Thực thi câu lệnh SQL
+                cmd.ExecuteNonQuery();
+            }
         }
     }
 }

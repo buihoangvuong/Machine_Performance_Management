@@ -6,11 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MySqlConnector;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
 
 namespace Machine_Performance_Management.Admin
 {
@@ -172,6 +168,7 @@ namespace Machine_Performance_Management.Admin
             }
         }
         #endregion
+        
         #region Factory
         public List<FactoryInfo> LoadFactoryList()
         {
@@ -364,6 +361,7 @@ namespace Machine_Performance_Management.Admin
         }
 
         #endregion
+        
         #region Machine Type
         public List<Device_Type> LoadDatadeviceType()
         {
@@ -530,63 +528,55 @@ namespace Machine_Performance_Management.Admin
         {
             newProductId = -1;
 
-            using (DbService db = new DbService(config))
+            using (var db = new DbService(config))
+            using (var conn = db.GetConnection())
+            using (var transaction = conn.BeginTransaction())
             {
-                // 1. Lấy factory_id từ factory_name
-                int factoryId = -1;
-                string getIdQuery = "SELECT factory_id FROM factory WHERE factory_name = @factory_name LIMIT 1";
-                using (var getIdCmd = db.GetMySqlCommand(getIdQuery))
+                try
                 {
-                    getIdCmd.Parameters.AddWithValue("@factory_name", factoryName);
-                    var result = getIdCmd.ExecuteScalar();
-                    if (result == null || !int.TryParse(result.ToString(), out factoryId))
+                    string sql = @"
+                INSERT INTO device_type (
+                    device_name, device_type, description, factory_id, event_user, event_time
+                )
+                VALUES (
+                    @device_name, 
+                    @device_type, 
+                    @description, 
+                    (SELECT factory_id FROM factory WHERE factory_name = @factory_name LIMIT 1),
+                    @event_user, 
+                    CURRENT_TIMESTAMP
+                );
+                SELECT LAST_INSERT_ID();";
+
+                    using (var cmd = new MySqlCommand(sql, conn, transaction))
                     {
-                        MessageBox.Show("Không tìm thấy nhà máy phù hợp!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return false;
+                        cmd.Parameters.AddWithValue("@device_name", devicename);
+                        cmd.Parameters.AddWithValue("@device_type", devicetype);
+                        cmd.Parameters.AddWithValue("@description", string.IsNullOrEmpty(description) ? (object)DBNull.Value : description);
+                        cmd.Parameters.AddWithValue("@factory_name", factoryName);
+                        cmd.Parameters.AddWithValue("@event_user", username);
+
+                        var result = cmd.ExecuteScalar();
+                        if (result != null && int.TryParse(result.ToString(), out newProductId) && newProductId > 0)
+                        {
+                            transaction.Commit();
+                            return true;
+                        }
+                        else
+                        {
+                            throw new Exception("Không thể insert device_type hoặc factory_name không tồn tại.");
+                        }
                     }
                 }
-
-                MySqlConnection conn = db.GetConnection();
-                using (MySqlTransaction transaction = conn.BeginTransaction())
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        // 2. Insert vào device_type với factory_id
-                        string insertLogDB = @"
-                            INSERT INTO device_type 
-                            (device_name, device_type, description, factory_id, event_user, event_time)
-                            VALUES 
-                            (@device_name, @device_type, @description, @factory_id, @event_user, CURRENT_TIMESTAMP);
-                            SELECT LAST_INSERT_ID();";
-
-                        using (MySqlCommand cmd = new MySqlCommand(insertLogDB, conn, transaction))
-                        {
-                            cmd.Parameters.AddWithValue("@device_name", devicename);
-                            cmd.Parameters.AddWithValue("@device_type", devicetype);
-                            cmd.Parameters.AddWithValue("@description", string.IsNullOrEmpty(description) ? (object)DBNull.Value : description);
-                            cmd.Parameters.AddWithValue("@factory_id", factoryId);
-                            cmd.Parameters.AddWithValue("@event_user", username);
-
-                            object result = cmd.ExecuteScalar();
-                            if (result != null)
-                            {
-                                newProductId = Convert.ToInt32(result);
-                            }
-                        }
-
-                        transaction.Commit();                    
-                        return true;
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        Console.WriteLine($"Lỗi khi insert: {ex.Message}");
-                        newProductId = -1;
-                        return false;
-                    }
+                    transaction.Rollback();
+                    Console.WriteLine($"Lỗi khi insert: {ex.Message}");
+                    return false;
                 }
             }
         }
+
         //public bool UpdateDeviceType(int Id, string devicename, string devicetype, string description, string factory, string UserName)
         //{
         //    string query = @"
@@ -623,55 +613,44 @@ namespace Machine_Performance_Management.Admin
         //        return false;
         //    }
         //}
-        public bool UpdateDeviceType(int Id, string devicename, string devicetype, string description, string factoryName, string UserName)
+        public bool UpdateDeviceType(int id, string devicename, string devicetype, string description, string factoryName, string username)
         {
-            using (DbService db = new DbService(config))
+            using (var db = new DbService(config))
+            using (var conn = db.GetConnection())
             {
-                // 1. Lấy factory_id từ factory_name
-                int factoryId = -1;
-                string getIdQuery = "SELECT factory_id FROM factory WHERE factory_name = @factory_name LIMIT 1";
-                using (var getIdCmd = db.GetMySqlCommand(getIdQuery))
-                {
-                    getIdCmd.Parameters.AddWithValue("@factory_name", factoryName);
-                    var result = getIdCmd.ExecuteScalar();
-                    if (result == null || !int.TryParse(result.ToString(), out factoryId))
-                    {
-                        MessageBox.Show("Không tìm thấy nhà máy phù hợp!", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return false;
-                    }
-                }
-
-                string query = @"
-                    UPDATE device_type 
-                    SET device_name = @devicename, 
-                        device_type = @devicetype, 
-                        description = @description, 
-                        factory_id = @factory_id,
-                        event_user = @UserName,
-                        event_time = CURRENT_TIMESTAMP
-                    WHERE id = @Id";
-
                 try
                 {
-                    using (MySqlCommand cmd = db.GetMySqlCommand(query))
-                    {
-                        cmd.Parameters.AddWithValue("@devicename", devicename);
-                        cmd.Parameters.AddWithValue("@devicetype", devicetype);
-                        cmd.Parameters.AddWithValue("@description", description);
-                        cmd.Parameters.AddWithValue("@factory_id", factoryId);
-                        cmd.Parameters.AddWithValue("@UserName", UserName);
-                        cmd.Parameters.AddWithValue("@Id", Id);
+                    string sql = @"
+                UPDATE device_type 
+                SET device_name = @device_name,
+                    device_type = @device_type,
+                    description = @description,
+                    factory_id = (SELECT factory_id FROM factory WHERE factory_name = @factory_name LIMIT 1),
+                    event_user = @event_user,
+                    event_time = CURRENT_TIMESTAMP
+                WHERE id = @id";
 
-                        return cmd.ExecuteNonQuery() > 0;
+                    using (var cmd = new MySqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@device_name", devicename);
+                        cmd.Parameters.AddWithValue("@device_type", devicetype);
+                        cmd.Parameters.AddWithValue("@description", string.IsNullOrEmpty(description) ? (object)DBNull.Value : description);
+                        cmd.Parameters.AddWithValue("@factory_name", factoryName);
+                        cmd.Parameters.AddWithValue("@event_user", username);
+                        cmd.Parameters.AddWithValue("@id", id);
+
+                        int rowsAffected = cmd.ExecuteNonQuery();
+                        return rowsAffected > 0;
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("Error updating device_type: " + ex.Message);
+                    Console.WriteLine($"Error updating device_type: {ex.Message}");
                     return false;
                 }
             }
         }
+
         public void DeleteDeviceType(int Id)
         {
             string deleteQuery = "DELETE FROM device_type WHERE id = ?";
@@ -704,7 +683,10 @@ namespace Machine_Performance_Management.Admin
         }
         #endregion
 
+        
+
     }
+
     #region User Edit
     public class userPasswordModel : ObservableObject
     {

@@ -1,6 +1,9 @@
-﻿using Machine_Performance_Management.Common;
+﻿using Machine_Performance_Management.Chart;
+using Machine_Performance_Management.Common;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,14 +24,27 @@ namespace Machine_Performance_Management.Performance
 	/// </summary>
 	public partial class PerformanceView : UserControl
 	{
-		protected readonly PerformanceViewModel viewModel = new PerformanceViewModel();
-		public PerformanceView()
+		protected readonly PerformanceViewModel viewModel;
+		public PerformanceView(string fullname)
 		{
 			InitializeComponent();
-			DataContext = viewModel;
+            viewModel = new PerformanceViewModel(fullname);
+            DataContext = viewModel;
             viewModel.ImportCompleted += OnImportCompleted;
+            viewModel.PropertyChanged += ViewModel_PropertyChanged;
+            this.Loaded += PerformanceView_Loaded;
         }
-
+        private void PerformanceView_Loaded(object sender, RoutedEventArgs e)
+        {
+            AddDynamicDateColumns(MyDataGrid, viewModel.DateHeaders);
+        }
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(viewModel.DateHeaders))
+            {
+                AddDynamicDateColumns(MyDataGrid, viewModel.DateHeaders);
+            }
+        }
         private void AddDynamicDateColumns(DataGrid dataGrid, List<string> dates)
         {
             if (dates == null || dates.Count == 0)
@@ -36,9 +52,35 @@ namespace Machine_Performance_Management.Performance
 
             dataGrid.Columns.Clear();
 
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "NO", Binding = new Binding("NO"), Width = 40 });
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Factory", Binding = new Binding("Factory"), Width = 80 });
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Machine Name", Binding = new Binding("Machine_Name"), Width = 150 });
+            var centerTextStyle = new Style(typeof(TextBlock));
+            centerTextStyle.Setters.Add(new Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center));
+            centerTextStyle.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
+
+
+            dataGrid.Columns.Add(new DataGridTextColumn { Header = "NO", Binding = new Binding("NO"), Width = 40, ElementStyle = centerTextStyle});
+            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Factory", Binding = new Binding("Factory"), Width = 70, ElementStyle = centerTextStyle });
+            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Machine Type", Binding = new Binding("Item"), Width = 95, ElementStyle = centerTextStyle });
+            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Machine Name", Binding = new Binding("Machine_Name"), Width = 110, ElementStyle = centerTextStyle });
+            //var machineColumn = new DataGridTemplateColumn
+            //{
+            //    Header = "Machine Name",
+            //    Width = 120
+            //};
+
+            // Tạo TextBlock trong CellTemplate
+            //var textFactory = new FrameworkElementFactory(typeof(TextBlock));
+            //textFactory.SetBinding(TextBlock.TextProperty, new Binding("Machine_Name"));
+            //textFactory.SetValue(TextBlock.ForegroundProperty, Brushes.Blue);
+            //textFactory.SetValue(TextBlock.CursorProperty, Cursors.Hand);
+            //textFactory.SetValue(TextBlock.TextWrappingProperty, TextWrapping.Wrap);
+            //textFactory.SetValue(TextBlock.TextDecorationsProperty, TextDecorations.Underline);
+
+            // Gán event click bằng style (hoặc attach command sau)
+            //textFactory.AddHandler(TextBlock.MouseLeftButtonUpEvent, new MouseButtonEventHandler(MachineNameClickHandler));
+
+            //machineColumn.CellTemplate = new DataTemplate { VisualTree = textFactory };
+            //dataGrid.Columns.Add(machineColumn);
+
 
             foreach (var date in dates)
             {
@@ -49,8 +91,22 @@ namespace Machine_Performance_Management.Performance
                     { 
                         StringFormat = "{0:0.##}%" 
                     },
-                    Width = 80
+                    Width = 60,
+                    ElementStyle = centerTextStyle
                 };
+
+                if (date == dates.Last())
+                {
+                    col.CellStyle = new Style(typeof(DataGridCell))
+                    {
+                        Setters =
+                        {
+                            new Setter(DataGridCell.BackgroundProperty, Brushes.LightYellow),
+                            new Setter(DataGridCell.FontWeightProperty, FontWeights.Bold),
+                            new Setter(DataGridCell.ForegroundProperty, Brushes.DarkRed)
+                        }
+                    };
+                }
                 dataGrid.Columns.Add(col);
             }
 
@@ -61,8 +117,25 @@ namespace Machine_Performance_Management.Performance
                 {
                     StringFormat = "{0:0.##}%"  // 🔹 Thêm %
                 },
-                Width = 80 
+                Width = 70,
+                ElementStyle = centerTextStyle
             });
+        }
+
+        private void MachineNameClickHandler(object sender, MouseButtonEventArgs e)
+        {
+            //if (sender is TextBlock tb && tb.DataContext is DevicePerformance machine)
+            //{
+            //    DevicePerformance1 test = new DevicePerformance1(); // hoặc lấy từ data hiện có
+            //    var detail = new ChartView(test);
+            //    //var detail = new ChartView();
+            //    detail.ShowDialog();
+            //}
+            //if (data != null && data.Any())
+            //{
+            //    var detail = new ChartView(data); // ✅ truyền cả danh sách
+            //    detail.ShowDialog();
+            //}
         }
 
         private void OnImportCompleted()
@@ -70,77 +143,108 @@ namespace Machine_Performance_Management.Performance
             AddDynamicDateColumns(MyDataGrid, viewModel.DateHeaders);
         }
 
-		private void DataGrid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-		{
-            var cell = e.OriginalSource as FrameworkElement;
-            if (cell == null)
-                return;
-
-            // Lấy DataContext của dòng hiện tại
-            var rowData = (cell.DataContext as DevicePerformance);
-            if (rowData == null)
-                return;
-
-            // Lấy cột được click
-            var column = (cell.Parent as DataGridCell)?.Column as DataGridBoundColumn;
-            if (column == null)
-                return;
-
-            // Header chính là ngày
-            string dateHeader = column.Header as string;
-
-            // Kiểm tra xem đây có phải cột ngày không
-            if (rowData.DailyPerformance.ContainsKey(dateHeader))
-            {
-                double target = rowData.Performance_Target.ContainsKey(dateHeader)
-                    ? rowData.Performance_Target[dateHeader]
-                    : 0;
-
-                double completed = rowData.Performance_Completed.ContainsKey(dateHeader)
-                    ? rowData.Performance_Completed[dateHeader]
-                    : 0;
-
-                MessageBox.Show(
-                    $"Ngày: {dateHeader}\n" +
-                    $"Capa/일 (Target): {target}\n" +
-                    $"생산량 (Completed): {completed}",
-                    "Chi tiết hiệu suất",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information
-                );
-            }
-        }
-
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (sender is DataGrid grid && grid.CurrentCell != null)
+            var grid = sender as DataGrid;
+            if (grid == null) return;
+
+            // Kiểm tra có click vào row không
+            var dep = (DependencyObject)e.OriginalSource;
+            DataGridRow row = null;
+            DataGridCell cell = null;
+
+            while (dep != null)
             {
-                var column = grid.CurrentCell.Column as DataGridTextColumn;
-                if (column == null) return;
-
-                // Lấy tiêu đề cột (chính là ngày)
-                string dateHeader = column.Header?.ToString();
-                if (string.IsNullOrEmpty(dateHeader) || dateHeader == "NO" || dateHeader == "Factory" || dateHeader == "Machine Name" || dateHeader == "Average")
-                    return;
-
-                // Lấy đối tượng DevicePerformance đang chọn
-                if (grid.SelectedItem is DevicePerformance device)
+                if (dep is DataGridCell)
+                    cell = dep as DataGridCell;
+                if (dep is DataGridRow)
                 {
-                    if (device.Performance_Target.ContainsKey(dateHeader) && device.Performance_Completed.ContainsKey(dateHeader) && device.Reason.ContainsKey(dateHeader))
-                    {
-                        double target = device.Performance_Target[dateHeader];
-                        double completed = device.Performance_Completed[dateHeader];
-                        string reason = device.Reason[dateHeader];
+                    row = dep as DataGridRow;
+                    break;
+                }
+                dep = VisualTreeHelper.GetParent(dep);
+            }
 
-                        MessageBox.Show(
-                            $"📅 Date: {dateHeader}\n🎯 Target: {target}\n✅ Completed: {completed}\n🕒 Reason: {reason}",
-                            "Thông tin chi tiết",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information
-                        );
-                    }
+            // Nếu không click vào row hoặc không click vào cell nào -> tắt popup
+            if (row == null || cell == null)
+            {
+                DetailPopup.IsOpen = false;
+                return;
+            }
+
+            if (grid.CurrentCell == null) return;
+
+            var column = grid.CurrentCell.Column as DataGridTextColumn;
+            if (column == null)
+            {
+                DetailPopup.IsOpen = false;
+                return;
+            }
+
+            string dateHeader = column.Header?.ToString();
+            if (string.IsNullOrEmpty(dateHeader) ||
+                dateHeader == "NO" ||
+                dateHeader == "Factory" ||
+                dateHeader == "Machine Name" ||
+                dateHeader == "Average")
+            {
+                DetailPopup.IsOpen = false;
+                return;
+            }
+
+            if (grid.SelectedItem is DevicePerformance device)
+            {
+                if (device.Performance_ST.ContainsKey(dateHeader) &&
+                    device.Performance_Target.ContainsKey(dateHeader) &&
+                    device.Performance_Completed.ContainsKey(dateHeader) &&
+                    device.Reason.ContainsKey(dateHeader))
+                {
+                    string model = device.Machine_Name;
+                    double st = device.Performance_ST[dateHeader];
+                    double target = device.Performance_Target[dateHeader];
+                    double completed = device.Performance_Completed[dateHeader];
+                    string reason = device.Reason[dateHeader];
+
+                    // Gán dữ liệu cho popup với nhiều màu
+                    PopupModel.Inlines.Clear();
+                    PopupModel.Inlines.Add(new Run("🖥️ ")
+                    {
+                        Foreground = (Brush)new BrushConverter().ConvertFromString("#00B4DB") // xanh dương
+                    }); 
+                    PopupModel.Inlines.Add(new Run("Model: ") { Foreground = Brushes.Black });
+                    PopupModel.Inlines.Add(new Run(model) { Foreground = Brushes.Black });
+
+                    PopupST.Inlines.Clear();
+                    PopupST.Inlines.Add(new Run("🎯 ")
+                    {
+                        Foreground = (Brush)new BrushConverter().ConvertFromString("#00B4DB") // xanh dương
+                    });
+                    PopupST.Inlines.Add(new Run("ST: ") { Foreground = Brushes.Black });
+                    PopupST.Inlines.Add(new Run(st.ToString()) { Foreground = Brushes.Black });
+
+                    PopupCompleted.Inlines.Clear();
+                    PopupCompleted.Inlines.Add(new Run("✅ ")
+                    {
+                        Foreground = (Brush)new BrushConverter().ConvertFromString("#00B4DB") // xanh dương
+                    });
+                    PopupCompleted.Inlines.Add(new Run("Completed: ") { Foreground = Brushes.Black });
+                    PopupCompleted.Inlines.Add(new Run($"{completed} / {target}") { Foreground = Brushes.Black });
+
+                    PopupReason.Inlines.Clear();
+                    PopupReason.Inlines.Add(new Run("🕒 ")
+                    {
+                        Foreground = (Brush)new BrushConverter().ConvertFromString("#00B4DB") // xanh dương
+                    });
+                    PopupReason.Inlines.Add(new Run("Reason: ") { Foreground = Brushes.Black });
+                    PopupReason.Inlines.Add(new Run(reason) { Foreground = Brushes.Black });
+
+                    DetailPopup.IsOpen = true;
+                    return;
                 }
             }
+
+            DetailPopup.IsOpen = false;
         }
+
     }
 }

@@ -27,12 +27,18 @@ namespace Machine_Performance_Management.Common
     public class DevicePerformance
     {
         public int NO { get; set; }
+        public string Date { get; set; }
         public string Factory { get; set; }
+        public string Item { get; set; }
         public string Machine_Name { get; set; }
 
         // Hiệu suất (%)
         public Dictionary<string, double> DailyPerformance { get; set; }
             = new Dictionary<string, double>();
+
+        public Dictionary<string, double> Performance_ST { get; set; }
+    = new Dictionary<string, double>();
+
 
         // Chỉ tiêu (capa/일)
         public Dictionary<string, double> Performance_Target { get; set; }
@@ -53,12 +59,30 @@ namespace Machine_Performance_Management.Common
                 return DailyPerformance.Values.Average();
             }
         }
-
-        //public string Performance_Taget { get; set; }
-        //public string Performance_Completed { get; set; }
     }
+	public class DevicePerformance1
+	{
+		public int NO { get; set; }
+		public string Date { get; set; }
+		public string Factory { get; set; }
+		public string Item { get; set; }
+		public string Machine_Name { get; set; }
 
-    public class FactoryInfo
+        public double Performance_ST { get; set; }
+
+        // Hiệu suất (%)
+        public double DailyPerformance { get; set; }
+
+		// Chỉ tiêu (capa/일)
+		public double Performance_Target { get; set; }
+
+		// Thực tế (생산량)
+		public double Performance_Completed { get; set; }
+
+		public string Reason { get; set; }
+	}
+
+	public class FactoryInfo
     {
         public int No { get; set; }
 
@@ -84,5 +108,22 @@ namespace Machine_Performance_Management.Common
         public string Event_User { get; set; }
         public string Event_Time { get; set; }
 
+    }
+
+    public class DevicePerformanceChart
+    {
+        public DateTime Date { get; set; }
+        public string Factory { get; set; }
+        public string Item { get; set; }
+        public string DeviceName { get; set; }
+        public int QtyTarget { get; set; }
+        public int QtyCompleted { get; set; }
+        public double DailyPerformance { get; set; } // %
+    }
+
+    public class DateOption
+    {
+        public string Display { get; set; }
+        public string Value { get; set; }
     }
 }
