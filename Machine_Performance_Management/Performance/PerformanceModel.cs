@@ -27,6 +27,7 @@ namespace Machine_Performance_Management.Performance
         public List<DevicePerformance> ReadExcelData(string filePath)
         {
             var result = new List<DevicePerformance>();
+            int index = 1;
 
             try
             {
@@ -50,8 +51,9 @@ namespace Machine_Performance_Management.Performance
 
                             var perf = new DevicePerformance
                             {
-                                NO = row - 4,
+                                NO = index,
                                 Factory = worksheet.Cells[row, 1].Text?.Trim().Substring(0, 2),
+                                Item = worksheet.Cells[row, 1].Text?.Trim().Substring(3, 3),
                                 Machine_Name = worksheet.Cells[row, 1].Text?.Trim()
                             };
 
@@ -60,6 +62,14 @@ namespace Machine_Performance_Management.Performance
                                 string dateHeader = worksheet.Cells[3, col].Text?.Trim();
                                 if (string.IsNullOrEmpty(dateHeader))
                                     continue;
+
+                                if (double.TryParse(worksheet.Cells[row, col + 1].Text.Replace(",", "").Trim(),
+                                    NumberStyles.Any,
+                                    CultureInfo.InvariantCulture,
+                                    out var STtValue))
+                                {
+                                    perf.Performance_ST[dateHeader] = STtValue;
+                                }
 
                                 if (double.TryParse(worksheet.Cells[row, col + 2].Text.Replace(",", "").Trim(),
                                                     NumberStyles.Any,
@@ -88,7 +98,8 @@ namespace Machine_Performance_Management.Performance
                                 perf.Reason[dateHeader] = worksheet.Cells[row, col + 5].Text;
                             }
 
-                            result.Add(perf); 
+                            result.Add(perf);
+                            index++;
                         }
                     }
                 }
@@ -109,14 +120,15 @@ namespace Machine_Performance_Management.Performance
                 {
                     var queryInsert = @"
                 INSERT INTO machine_performance 
-                (date, factory, device_name, qty_taget, qty_completed, daily_performance, reason, event_user) 
+                (date, factory, device_type, device_name, qty_taget, qty_completed, daily_performance, reason, event_user, event_time) 
                 VALUES 
-                (@date, @factory, @device_name, @qty_taget, @qty_completed, @daily_performance, @reason, @even_user )";
+                (@date, @factory, @device_type, @device_name, @qty_taget, @qty_completed, @daily_performance, @reason, @even_user, CURRENT_TIMESTAMP)";
 
                     var parametersInsert = new List<MySqlParameter>
             {
                 new MySqlParameter("@date", item.Date ?? (object)DBNull.Value),
                 new MySqlParameter("@factory", item.Factory ?? (object)DBNull.Value),
+                new MySqlParameter("@device_type", item.Item?? (object)DBNull.Value),
                 new MySqlParameter("@device_name", item.Machine_Name ?? (object)DBNull.Value),
                 new MySqlParameter("@qty_taget", item.Performance_Target),
                 new MySqlParameter("@qty_completed", item.Performance_Completed),
@@ -147,7 +159,11 @@ namespace Machine_Performance_Management.Performance
                     {
                         while (reader.Read())
                         {
-                            factoryList.Add(reader["factory"]?.ToString());
+                            var factory= reader["factory"]?.ToString();
+                            if (!string.IsNullOrWhiteSpace(factory))
+                            {
+                                factoryList.Add(factory);
+                            }
                         }
                     }
                 }
@@ -158,6 +174,40 @@ namespace Machine_Performance_Management.Performance
             }
 
             return factoryList;
+        }
+
+        public List<string> GetMachineTypeList()
+        {
+            var machineTypeList = new List<string>();
+
+            try
+            {
+                using (DbService db = new DbService(config))
+                {
+                    StringBuilder query = new StringBuilder();
+                    query.Append("SELECT DISTINCT device_type FROM machine_performance");
+
+                    var cmd = db.GetMySqlCommand(query.ToString());
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var deviceType = reader["device_type"]?.ToString();
+                            if (!string.IsNullOrWhiteSpace(deviceType))
+                            {
+                                machineTypeList.Add(deviceType);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] : {ex.Message}");
+            }
+
+            return machineTypeList;
         }
 
         public List<string> LoadDeviceTypeList(string factory)
@@ -199,19 +249,22 @@ namespace Machine_Performance_Management.Performance
             return deviceTypes;
         }
 
-        public List<DevicePerformance> LoadPerformanceMachineList(string factory, string month)
+        public List<DevicePerformance> LoadPerformanceMachineList(string factory, string machinetype, DateTime fromDate, DateTime toDate)
         {
             var result = new List<DevicePerformance>();
             var deviceDict = new Dictionary<string, DevicePerformance>();
             var dateList = new List<string>();
 
+            int currentYear = DateTime.Now.Year;
+            fromDate = new DateTime(currentYear, fromDate.Month, fromDate.Day);
+            toDate = new DateTime(currentYear, toDate.Month, toDate.Day);
+
             StringBuilder query = new StringBuilder("SELECT * FROM machine_performance");
             List<string> conditions = new List<string>();
             if (!string.IsNullOrWhiteSpace(factory) && factory != "All")
                 conditions.Add("factory = @factory");
-            if (!string.IsNullOrWhiteSpace(month) && month != "All")
-                // Lấy phần tháng sau dấu '/' trong chuỗi ngày
-                conditions.Add("SUBSTRING_INDEX(date, '.', -1) = @month");
+            if (!string.IsNullOrWhiteSpace(machinetype) && machinetype != "All")
+                conditions.Add("device_type = @device_type");
 
             if (conditions.Any())
                 query.Append(" WHERE " + string.Join(" AND ", conditions));
@@ -224,16 +277,33 @@ namespace Machine_Performance_Management.Performance
                     MySqlCommand cmd = db.GetMySqlCommand(query.ToString());
                     if (!string.IsNullOrWhiteSpace(factory) && factory != "All")
                         cmd.Parameters.AddWithValue("@factory", factory);
-                    if (!string.IsNullOrWhiteSpace(month) && month != "All")
-                        cmd.Parameters.AddWithValue("@month", month.PadLeft(2, '0')); 
+                    if (!string.IsNullOrWhiteSpace(machinetype) && machinetype != "All")
+                        cmd.Parameters.AddWithValue("@device_type", machinetype);
 
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
                         {
-                            string deviceName = reader["device_name"]?.ToString();
                             string factoryName = reader["factory"]?.ToString();
+                            string item = reader["device_type"]?.ToString();
+                            string deviceName = reader["device_name"]?.ToString();
                             string date = reader["date"]?.ToString();
+
+                            // Lọc theo khoảng ngày trong năm hiện tại
+                            if (!string.IsNullOrEmpty(date))
+                            {
+                                //Kiểm tra đnh dạng dd.MM và chuyển sang datetime
+                                if (DateTime.TryParseExact(date, "dd.MM", null, System.Globalization.DateTimeStyles.None, out DateTime dateValue))
+                                {
+                                    var dateWithYear = new DateTime(currentYear, dateValue.Month, dateValue.Day);
+                                    if (dateWithYear < fromDate || dateWithYear > toDate)
+                                        continue;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
 
                             double dailyPerformance = reader["daily_performance"] != DBNull.Value ? Convert.ToDouble(reader["daily_performance"]) : 0;
                             double performanceTarget = reader["qty_taget"] != DBNull.Value ? Convert.ToDouble(reader["qty_taget"]) : 0;
@@ -249,6 +319,7 @@ namespace Machine_Performance_Management.Performance
                                 deviceDict[key] = new DevicePerformance
                                 {
                                     Factory = factoryName,
+                                    Item = item,
                                     Machine_Name = deviceName,
                                     DailyPerformance = new Dictionary<string, double>(),
                                     Performance_Target = new Dictionary<string, double>(),
@@ -291,6 +362,7 @@ namespace Machine_Performance_Management.Performance
 
             return result;
         }
+        
         public List<int> GetMonth(string device_type, string year)
         {
             var result = new List<int>(new int[12]); // 12 tháng
@@ -350,6 +422,31 @@ namespace Machine_Performance_Management.Performance
 
             return result;
         }
+
+        public DateTime? GetServerTime()
+        {
+            string query = "SELECT CURRENT_TIMESTAMP";
+            try
+            {
+                using (DbService db = new DbService(config))  // Mở kết nối MySQL
+                {
+                    using (MySqlCommand cmd = db.GetMySqlCommand(query))  // Lấy MySqlCommand
+                    {
+                        var result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            return Convert.ToDateTime(result);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Lỗi: " + ex.Message);
+            }
+            return null; // Trả về null nếu có lỗi
+        }
+
 
     }
 }

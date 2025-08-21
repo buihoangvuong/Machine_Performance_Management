@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using Machine_Performance_Management.Extension;
 using Machine_Performance_Management.Main;
 
-//using Machine_Performance_Management.Main;
+using Machine_Performance_Management.Main;
 using System;
 using System.Threading.Tasks;
 using System.Windows;
@@ -75,28 +75,28 @@ namespace Machine_Performance_Management.Login
                 return;
             }
 
-            var (loginResult, errorMessage, userInfo) = await loginModel.LoginUserAsync(Username, Password);
+			var (loginResult, errorMessage, userInfo) = await loginModel.LoginUserAsync(Username, Password);
 
-            if (loginResult != LoginResult.Success)
-            {
-                MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-            if (RememberMe)
-            {
-                RegistryHelper.Write("Username", Username);
-            }
-            else
-            {
-                RegistryHelper.Write("Username", "");
-            }
-            // Đăng nhập thành công -> Chuyển sang MainWindow
-            MainWindow main = new MainWindow(userInfo.UserName, userInfo.Role, userInfo.Fullname)
-            {
-                DataContext = new MainWindowViewModel(userInfo.UserName, userInfo.Role, userInfo.Fullname)
-            };
-            main.Show();
-            Application.Current.MainWindow.Close();
-        }
+			if (loginResult != LoginResult.Success)
+			{
+				MessageBox.Show(errorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+				return;
+			}
+			if (RememberMe)
+			{
+				RegistryHelper.Write("Username", Username);
+			}
+			else
+			{
+				RegistryHelper.Write("Username", "");
+			}
+			//Đăng nhập thành công -> Chuyển sang MainWindow
+		   MainWindow main = new MainWindow(userInfo.UserName, userInfo.Role, userInfo.Fullname)
+		   {
+			   DataContext = new MainWindowViewModel(userInfo.UserName, userInfo.Role, userInfo.Fullname)
+		   };
+			main.Show();
+			Application.Current.MainWindow.Close();
+		}
     }
 }

@@ -4,6 +4,74 @@
              xmlns:local="clr-namespace:Machine_Performance_Management"
              StartupUri="Login/LoginView.xaml">
     <Application.Resources>
-         
+
+        <LinearGradientBrush x:Key="ButtonBrush" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#00B4DB" Offset="0"/>
+            <GradientStop Color="#0083B0" Offset="1"/>
+        </LinearGradientBrush>
+        
+        <Style x:Key="ButtonStyleSmall" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource ButtonBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="Black"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="2,2,2,2"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="MinWidth" Value="100"/>
+            <Setter Property="MinHeight" Value="30"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" 
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="10"
+                        Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="bd" Property="Opacity" Value="0.7"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Styles  bảng -->
+        <Style x:Key="ModernDataGrid" TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E2E8F0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+
+            <!-- Hiển thị cả kẻ ngang và dọc -->
+            <Setter Property="GridLinesVisibility" Value="All"/>
+
+            <!-- Màu đường kẻ ngang -->
+            <Setter Property="HorizontalGridLinesBrush" Value="#ccc"/>
+
+            <!-- Màu đường kẻ dọc -->
+            <Setter Property="VerticalGridLinesBrush" Value="#ccc"/>
+
+            <Setter Property="RowHeight" Value="35"/>
+            <Setter Property="AlternatingRowBackground" Value="#F8FAFC"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="CanUserDeleteRows" Value="False"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+        </Style>
+
+        <LinearGradientBrush x:Key="BackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#E2E8F0" Offset="1"/>
+        </LinearGradientBrush>
+        
     </Application.Resources>
 </Application>

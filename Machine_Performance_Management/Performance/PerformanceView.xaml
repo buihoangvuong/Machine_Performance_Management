@@ -3,67 +3,126 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
              xmlns:viewmodel="clr-namespace:Machine_Performance_Management.Performance"
              d:DataContext="{d:DesignInstance Type=viewmodel:PerformanceViewModel}"
+             
+             Background="{DynamicResource BackgroundBrush}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="700" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
-            <RowDefinition />
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="55*" />
+            <RowDefinition Height="7*" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2.5*"/>
-                <ColumnDefinition Width="2.5*"/>
-                <ColumnDefinition Width="2.5*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <Border BorderThickness="1" BorderBrush="#DDDDDD" CornerRadius="8" Padding="15" Margin="10" Background="#FAFAFA">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.5*"/>
+                    <!-- Factory -->
+                    <ColumnDefinition Width="2*"/>
+                    <!-- Machine Type -->
+                    <ColumnDefinition Width="5*"/>
+                    <!-- Date Filter -->
+                    <ColumnDefinition Width="1*"/>
+                    <!-- Buttons -->
+                </Grid.ColumnDefinitions>
 
-            <DockPanel Grid.Column="0" HorizontalAlignment="Left" Margin="20">
-                <TextBlock
-                Text="Factory:"
-                FontWeight="Bold"
-                Height="25" Width="100"/>
+                <!-- Factory -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+                    <TextBlock Text="Factory:"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       Width="60"
+                       FontSize="14"/>
+                    <ComboBox Height="30" Width="120"
+                      ItemsSource="{Binding FactoryitemDataManagement}"
+                      SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}"
+                      Margin="5 0 0 0"
+                      FontSize="14"/>
+                </StackPanel>
 
-                <ComboBox
-                Height="25" Width="100"
-                ItemsSource="{Binding FactoryitemDataManagement}"
-                SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}"
-                    />
-            </DockPanel>
+                <!-- Machine Type -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+                    <TextBlock Text="Machine Type:"
+                       FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       Width="100"
+                       FontSize="14"/>
+                    <ComboBox Height="30" Width="140"
+                      ItemsSource="{Binding MachineTypeDataItem}"
+                      SelectedItem="{Binding SelectedMachineTypeItem, Mode=TwoWay}"
+                      Margin="5 0 0 0"
+                      FontSize="14"/>
+                </StackPanel>
 
-            <DockPanel Grid.Column="1" HorizontalAlignment="Left">
-                <TextBlock
-                Text="Month:"
-                FontWeight="Bold"
-                Height="25" Width="100"/>
+                <!-- Date Filter -->
+                <Grid Grid.Column="2" Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <ComboBox
-                     ItemsSource="{Binding Months}"
-                    SelectedItem="{Binding SelectedMonth, Mode=TwoWay}"
-                Height="25" Width="100"/>
-            </DockPanel>
+                    <!-- Label -->
+                    <Label Grid.Column="0"
+                   Content="*Date:"
+                   VerticalAlignment="Center"
+                   FontSize="14"
+                   FontWeight="Bold"
+                   Margin="0 0 5 0"/>
 
-            <DockPanel Grid.Column="2" HorizontalAlignment="Left">
-                <TextBlock
-                Text="Year:"
-                FontWeight="Bold"
-                Height="25" Width="100"/>
+                    <!-- DatePicker From -->
+                    <DatePicker Grid.Column="1"
+                        SelectedDate="{Binding DateFrom}"
+                        Height="30" Width="150"
+                        FontSize="14"
+                        VerticalContentAlignment="Center"
+                        Margin="0 0 10 0"/>
 
-                <ComboBox
-                Height="25" Width="100"/>
-            </DockPanel>
-            
-            <Button Grid.Column="3"
-                    HorizontalAlignment="Left"
-                    Command="{Binding ImportCommand}"
-                    Content="📥 Import" 
-                     Height="25" Width="100"/>
-        </Grid>
+                    <!-- Separator -->
+                    <Label Grid.Column="2"
+                   Content="~"
+                   VerticalAlignment="Center"
+                   FontSize="16"
+                   FontWeight="Bold"
+                   Margin="5 0"/>
 
-        <DataGrid Grid.Row="1" x:Name="MyDataGrid"
+                    <!-- DatePicker To -->
+                    <DatePicker Grid.Column="3"
+                        SelectedDate="{Binding DateTo}"
+                        Height="30" Width="150"
+                        FontSize="14"
+                        VerticalContentAlignment="Center"
+                        Margin="10 0 0 0"/>
+
+                    <!-- Search Button -->
+                    <Button Grid.Column="4"
+                        Content="🔍 Search"
+                        Margin="100 0 0 0"
+                        Command="{Binding SearchCommand}"
+                        Style="{StaticResource ButtonStyleSmall}"/>
+                </Grid>
+
+                <!-- Import Button -->
+                <Button Grid.Column="3"
+                Command="{Binding ImportCommand}"
+                Style="{StaticResource ButtonStyleSmall}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="📥" FontSize="16" Margin="0 0 5 0"/>
+                        <TextBlock Text="Import Data" FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <Border BorderThickness="1" Grid.Row="1">
+            <DataGrid  x:Name="MyDataGrid" Margin="10" Background="{DynamicResource BackgroundBrush}"
+                  Style="{StaticResource ModernDataGrid}"
                   ItemsSource="{Binding PerFormanceData}"
                   AutoGenerateColumns="False"
                   CanUserAddRows="False"
@@ -72,40 +131,126 @@
                   IsReadOnly="True"
                    MouseLeftButtonUp="DataGrid_MouseDoubleClick">
 
-            <DataGrid.RowStyle>
+                <!--<DataGrid.RowStyle>
                 <Style TargetType="DataGridRow">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsTemplateRow}" Value="True">
-                            <Setter Property="Background" Value="#FFFFE0"/>
+                        <DataTrigger>
+                            <Setter Property="Background" Value="AliceBlue"/>
                             <Setter Property="Foreground" Value="Black"/>
                             <Setter Property="FontWeight" Value="DemiBold"/>
-                            <Setter Property="FontSize" Value="14"/>
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </DataGrid.RowStyle>
+            </DataGrid.RowStyle>-->
 
-            <DataGrid.ColumnHeaderStyle>
-                <Style TargetType="DataGridColumnHeader">
-                    <Setter Property="Background" Value="#FF2E4687"/>
-                    <Setter Property="Foreground" Value="White"/>
-                    <Setter Property="FontWeight" Value="Bold"/>
-                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                    <Setter Property="BorderBrush" Value="Black"/>
-                    <Setter Property="BorderThickness" Value="1"/>
-                </Style>
-            </DataGrid.ColumnHeaderStyle>
+                <!--<DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="BorderBrush" Value="LightGray"/>
+                        <Setter Property="BorderThickness" Value="0.5"/>
+                        <Style.Triggers>
+                            --><!-- Khi ô được chọn --><!--
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#FFFFCC"/>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>-->
 
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="NO" Binding="{Binding NO}" Width="40"/>
-                <DataGridTextColumn Header="Factory" Binding="{Binding Factory}" Width="80"/>
-                <DataGridTextColumn Header="Machine Name" Binding="{Binding Machine_Name}" Width="150"/>
 
-                <!-- Cột ngày sẽ thêm động ở code-behind -->
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+                </DataGrid.Resources>
 
-                <DataGridTextColumn Header="Average" Binding="{Binding AveragePerformance, StringFormat={}{0:F2}}" Width="80"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background" Value="#2980B9"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="Padding" Value="8 4"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
 
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="NO" Binding="{Binding NO}" Width="40"/>
+                    <DataGridTextColumn Header="Factory" Binding="{Binding Factory}" Width="75"/>
+                    <DataGridTextColumn Header="Machine Type" Binding="{Binding Item}" Width="95"/>
+                    <DataGridTextColumn Header="Machine Name" Binding="{Binding Machine_Name}" Width="115"/>
+
+                    <!--<DataGridTemplateColumn Header="Machine Name" Width="120">
+
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Machine_Name}" 
+                                   Foreground="Blue" 
+                                   Cursor="Hand"
+                                   TextWrapping="Wrap" 
+                                   TextDecorations="Underline">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonUp">
+                                    <i:InvokeCommandAction Command="{Binding DataContext.MachineNameClickCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
+                                                           CommandParameter="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>-->
+
+
+                    <!-- Cột ngày sẽ thêm động ở code-behind -->
+
+                    <DataGridTextColumn Header="Average" Binding="{Binding AveragePerformance, StringFormat={}{0:F2}}" 
+                                    Width="70"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+        </Border>
+
+        <Grid Grid.Row="2">
+            <Button Content="📊 Chart"  Margin="15 0 0 0"
+                    Style="{StaticResource ButtonStyleSmall}"
+                    Width="100"
+                    HorizontalAlignment="Left"
+                    Command="{Binding MachineNameClickCommand}"/>
+        </Grid>
+        <!-- Popup hiển thị chi tiết -->
+        <Popup x:Name="DetailPopup"
+               StaysOpen="False"
+               Placement="MousePoint"
+               AllowsTransparency="True"
+               PopupAnimation="Fade">
+            <Border Background="White" Padding="15" CornerRadius="10" BorderThickness="1" >
+                <StackPanel>
+                    <TextBlock Text="Information Detail"
+                       FontSize="16"
+                       FontWeight="Bold"
+                       Foreground="DarkBlue"
+                       Margin="0,0,0,10"
+                       TextAlignment="Center"/>
+                    <Separator Margin="0,2"/>
+                    
+                    <TextBlock x:Name="PopupModel" Margin="5"/>
+                    <Separator Margin="0,2"/>
+                    
+                    <TextBlock x:Name="PopupCompleted" Margin="5"/>
+                    <Separator Margin="0,2"/>
+                    
+                    <TextBlock x:Name="PopupST" Margin="5"/>
+                    <Separator Margin="0,2"/>
+                    
+                    <TextBlock x:Name="PopupReason" Margin="5"/>
+                    <Separator Margin="0,2"/>
+                    
+                    <!--<Button Content="Close" Margin="0,10,0,0" Width="80" 
+                            HorizontalAlignment="Right"
+                            Click="ClosePopup_Click"/>-->
+                </StackPanel>
+            </Border>
+        </Popup>
     </Grid>
 </UserControl>
