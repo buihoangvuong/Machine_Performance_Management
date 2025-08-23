@@ -4,13 +4,447 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Machine_Performance_Management"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
         mc:Ignorable="d"
         xmlns:viewmodels="clr-namespace:Machine_Performance_Management.Main"
         xmlns:local1="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
         d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
         WindowStartupLocation="CenterScreen"
         Title="Machine Performance Manager 0.0.1" Height="850" Width="1355">
-    <Grid>
+
+    <Window.Resources>
+        <!-- Button Style for Sidebar -->
+        <Style x:Key="SidebarButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="20,15"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                             BorderBrush="{TemplateBinding BorderBrush}" 
+                             BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                         VerticalAlignment="Center"
+                                         Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#4DCCCCCC"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- DataGrid Style -->
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#E0E0E0"/>
+            <Setter Property="RowHeight" Value="50"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="CanUserReorderColumns" Value="False"/>
+            <Setter Property="CanUserResizeRows" Value="False"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="AlternatingRowBackground" Value="#F9F9F9"/>
+        </Style>
+
+        <!-- DataGrid Header Style -->
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#333"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="15,15"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+
+        <!-- DataGrid Cell Style -->
+        <Style TargetType="DataGridCell">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,0"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#E3F2FD"/>
+                    <Setter Property="Foreground" Value="#1976D2"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Pagination Button Style -->
+        <Style x:Key="PaginationButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#DDD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F5F5F5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Active Page Button Style -->
+        <Style x:Key="ActivePageButtonStyle" TargetType="Button" BasedOn="{StaticResource PaginationButtonStyle}">
+            <Setter Property="Background" Value="#4FC3F7"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#4FC3F7"/>
+        </Style>
+
+        <!-- Style cho ToggleButton (Arrow) -->
+        <Style x:Key="ExpanderToggleButtonStyle" TargetType="ToggleButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}" 
+                         BorderThickness="0"
+                         Padding="5">
+                            <Path x:Name="ExpandPath"
+                           Data="M 0 0 L 6 6 L 0 12 Z"
+                           Fill="{TemplateBinding Foreground}"
+                           Stroke="{TemplateBinding Foreground}"
+                           StrokeThickness="0.5"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ExpandPath" Property="Fill" Value="LightBlue"/>
+                                <Setter Property="Background" Value="#22FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Style Expander hoàn chỉnh với animation mượt -->
+        <Style x:Key="SmoothExpanderStyle" TargetType="Expander">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Expander">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Header -->
+                            <Border Grid.Row="0" 
+                             x:Name="HeaderBorder"
+                             Background="Transparent"
+                             MinHeight="40"
+                             Cursor="Hand">
+                                <Grid Margin="10,5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Header Content -->
+                                    <ContentPresenter Grid.Column="0"
+                                             ContentSource="Header"
+                                             RecognizesAccessKey="True"
+                                             HorizontalAlignment="Left"
+                                             VerticalAlignment="Center"/>
+
+                                    <!-- Toggle Button (Arrow) -->
+                                    <ToggleButton Grid.Column="1"
+                                         x:Name="ExpanderButton"
+                                         IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                                         Style="{StaticResource ExpanderToggleButtonStyle}"
+                                         Foreground="{TemplateBinding Foreground}"
+                                         Width="24"
+                                         Height="24"
+                                         Margin="10,0,5,0">
+                                        <ToggleButton.RenderTransform>
+                                            <RotateTransform x:Name="ArrowRotateTransform" 
+                                                    Angle="0" 
+                                                    CenterX="12" 
+                                                    CenterY="12"/>
+                                        </ToggleButton.RenderTransform>
+                                    </ToggleButton>
+                                </Grid>
+                            </Border>
+
+                            <!-- Content Area với Animation -->
+                            <Grid Grid.Row="1" 
+                           x:Name="ContentGrid"
+                           ClipToBounds="True">
+                                <Grid.RenderTransform>
+                                    <ScaleTransform x:Name="ContentScale" 
+                                           ScaleY="0" 
+                                           CenterY="0"/>
+                                </Grid.RenderTransform>
+
+                                <ContentPresenter x:Name="ExpanderContent"
+                                         Focusable="False"
+                                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                         VerticalAlignment="Top"
+                                         Margin="{TemplateBinding Padding}"
+                                         Opacity="0"/>
+                            </Grid>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <!-- Trigger khi mở -->
+                            <Trigger Property="IsExpanded" Value="True">
+                                <Trigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!-- Arrow rotation -->
+                                            <DoubleAnimation Storyboard.TargetName="ArrowRotateTransform"
+                                                    Storyboard.TargetProperty="Angle"
+                                                    To="90"
+                                                    Duration="0:0:0.25">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <QuadraticEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+
+                                            <!-- Content scale -->
+                                            <DoubleAnimation Storyboard.TargetName="ContentScale"
+                                                    Storyboard.TargetProperty="ScaleY"
+                                                    From="0"
+                                                    To="1"
+                                                    Duration="0:0:0.3">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <QuadraticEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+
+                                            <!-- Content opacity -->
+                                            <DoubleAnimation Storyboard.TargetName="ExpanderContent"
+                                                    Storyboard.TargetProperty="Opacity"
+                                                    From="0"
+                                                    To="1"
+                                                    Duration="0:0:0.25"
+                                                    BeginTime="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <QuadraticEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.EnterActions>
+
+                                <!-- Trigger khi đóng -->
+                                <Trigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <!-- Arrow rotation -->
+                                            <DoubleAnimation Storyboard.TargetName="ArrowRotateTransform"
+                                                    Storyboard.TargetProperty="Angle"
+                                                    To="0"
+                                                    Duration="0:0:0.25">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <QuadraticEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+
+                                            <!-- Content opacity (ẩn trước) -->
+                                            <DoubleAnimation Storyboard.TargetName="ExpanderContent"
+                                                    Storyboard.TargetProperty="Opacity"
+                                                    To="0"
+                                                    Duration="0:0:0.15">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <QuadraticEase EasingMode="EaseIn"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+
+                                            <!-- Content scale (thu nhỏ sau) -->
+                                            <DoubleAnimation Storyboard.TargetName="ContentScale"
+                                                    Storyboard.TargetProperty="ScaleY"
+                                                    To="0"
+                                                    Duration="0:0:0.3"
+                                                    BeginTime="0:0:0.05">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <QuadraticEase EasingMode="EaseOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </Trigger.ExitActions>
+                            </Trigger>
+
+                            <!-- Hover effect -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="HeaderBorder" Property="Background" Value="#22FFFFFF"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Background="#1F1C2C">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="270"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="1" Grid.Column="0">
+            <Border Grid.Row="1" Grid.Column="0"  CornerRadius="0,80,0,0">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#1F1C2C" Offset="0"/>
+                        <GradientStop Color="#1F1C2C"  Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <StackPanel>
+                    <!-- Profile Section -->
+                    <StackPanel Orientation="Vertical" Margin="20,30,20,40">
+                        <Grid>
+                            <Ellipse Width="100" Height="100" Fill="#81E6D9" />
+
+                            <!-- Chữ D nằm giữa hình tròn -->
+                            <TextBlock Text="𝐏" FontSize="50" FontWeight="Bold"
+                                       Foreground="#2D3748" 
+                                       Height="70" Width="100"
+                                       TextAlignment="Center"
+                                       VerticalAlignment="Center" 
+                                       HorizontalAlignment="Center">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="MouseLeftButtonDown">
+                                        <i:InvokeCommandAction Command="{Binding DataContext.ClickHome, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                                               CommandParameter="{Binding}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBlock>
+                        </Grid>
+                        <!-- Tên -->
+                        <TextBlock Text="MPM_TOOL" 
+                                    FontSize="25" 
+                                    FontWeight="Bold" 
+                                    Foreground="White" 
+                                    Margin="0,10,0,0"
+                                    HorizontalAlignment="Center"/>
+                        <Border Height="1" Margin="0 15 0 0" Background="#DBDBDB" HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+
+                    <!-- Navigation Menu -->
+
+                    <!-- StackPanel -->
+                    <StackPanel>
+                        <Button x:Name="PerformanceBtn" 
+                            Style="{StaticResource SidebarButtonStyle}" 
+                                Command="{Binding ClickPerformance}"
+                            Tag="History">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📊" FontSize="25" Margin="0,0,20,0"/>
+                                <TextBlock Text="설비 가동율 관리 현황" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button x:Name="HistoryBtn" Style="{StaticResource SidebarButtonStyle}" Tag="History">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="📋" FontSize="25" Margin="0,0,20,0"/>
+                                <TextBlock Text="역사" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Manager group -->
+                        <Expander 
+                         FontSize="20" 
+                         Foreground="White" 
+                         Background="Transparent"
+                         Style="{StaticResource SmoothExpanderStyle}">
+                            <Expander.Header>
+                                <StackPanel  Margin="10 0 0 0" Orientation="Horizontal">
+                                    <TextBlock Text="🛠️" FontSize="25" Margin="0,0,15,0"/>
+                                    <TextBlock Text="부장님" FontSize="20" VerticalAlignment="Center" FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </Expander.Header>
+
+                            <!--Submenu-->
+                            <StackPanel>
+                                <Button x:Name="UserManagerBtn" Margin="20 0 0 0"
+                             Style="{StaticResource SidebarButtonStyle}" 
+                             Tag="UserManager">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="👥" FontSize="20" Margin="0,0,20,0"/>
+                                        <TextBlock Text="사용자 관리자" FontSize="17" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button x:Name="SpecInfoManagerBtn" Margin="20 0 0 0"
+                             Style="{StaticResource SidebarButtonStyle}" 
+                             Tag="SpecInfoManager">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="🛢" FontSize="20" Margin="0,0,20,0"/>
+                                        <TextBlock Text="사양 관리자" FontSize="17" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <!-- Logout Button -->
+            <!--<Button Style="{StaticResource SidebarButtonStyle}" 
+                     HorizontalAlignment="Right"
+                     VerticalAlignment="Bottom" 
+                    Click="LogoutButton_Click">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="➜]" FontSize="25" Margin="0,0,20,0"/>
+                    <TextBlock Text="로그아웃" Margin="0 5 0 0 " FontSize="20"/>
+                </StackPanel>
+            </Button>-->
+        </Grid>
+        <!-- Sidebar -->
+
+        <!-- Main Content Area -->
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="35"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <ContentControl Content="{Binding CurrentView}" Grid.ColumnSpan="2" />
+            </Grid>
+            <Grid Grid.Row="1">
+                <Label Content="©PARTRON VINA CO.,LTD" Margin="0,4,9,0" 
+                       FontSize="14" FontWeight="Bold" FontFamily="Arial" Foreground="White"
+                       RenderTransformOrigin="0.275,-0.326" 
+                       HorizontalAlignment="Right"  VerticalAlignment="Center"
+                       Width="189" Height="23"/>
+            </Grid>
+        </Grid>
+
+    </Grid>
+
+
+    <!--<Grid>
         <Grid Background="White">
             <Grid.RowDefinitions>
                 <RowDefinition Height="70"/>
@@ -51,7 +485,9 @@
                                                 </Setter.Value>
                                             </Setter>
                                             
-                        <!-- Màu khi được chọn -->
+                        -->
+    <!-- Màu khi được chọn -->
+    <!--
                         
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -81,7 +517,9 @@
                                                     </LinearGradientBrush>
                                                 </Setter.Value>
                                             </Setter>
-                                             <!--Màu khi được chọn--> 
+                                             -->
+    <!--Màu khi được chọn-->
+    <!-- 
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
@@ -111,7 +549,9 @@
                                                 </Setter.Value>
                                             </Setter>
                                             
-                        <!-- Màu khi được chọn -->
+                        -->
+    <!-- Màu khi được chọn -->
+    <!--
                         
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -128,5 +568,5 @@
                 <Label Content="©PARTRON VINA CO.,LTD" Margin="0,4,9,0" FontSize="14" FontWeight="Bold" FontFamily="Arial" RenderTransformOrigin="0.275,-0.326" HorizontalAlignment="Right" Width="189" Height="23" VerticalAlignment="Center"/>
             </Grid>
         </Grid>
-    </Grid>
+    </Grid>-->
 </Window>

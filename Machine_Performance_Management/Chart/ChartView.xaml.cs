@@ -21,7 +21,7 @@ namespace Machine_Performance_Management.Chart
 	public partial class ChartView : Window
 	{
 		protected readonly ChartViewModel viewModel; //= new ChartViewModel();
-		public ChartView(List<DevicePerformance1> test)
+		public ChartView(List<DevicePerformance> test)
 		{
 			InitializeComponent();
 

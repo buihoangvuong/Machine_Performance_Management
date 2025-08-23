@@ -19,7 +19,7 @@ namespace Machine_Performance_Management.Chart
 	{
 		//private ChartModel chartModel = new ChartModel();
 
-		private List<DevicePerformance1> data;
+		private List<DevicePerformance> data;
 
 		public SeriesCollection Series { get; set; }
 		public string[] Labels { get; set; }
@@ -94,15 +94,15 @@ namespace Machine_Performance_Management.Chart
 		}
 
 
-		public ChartViewModel(List<DevicePerformance1> test)
+		public ChartViewModel(List<DevicePerformance> test)
 		{
-			data = test ?? new List<DevicePerformance1>();
+			data = test ?? new List<DevicePerformance>();
 
-			AvailableDates = new ObservableCollection<DateTime>(
-				data.Select(d => DateTime.ParseExact(d.Date, "dd.MM", null))
-					.Distinct()
-					.OrderBy(d => d)
-			);
+			//AvailableDates = new ObservableCollection<DateTime>(
+			//	data.Select(d => DateTime.ParseExact(d.Date, "dd.MM", null))
+			//		.Distinct()
+			//		.OrderBy(d => d)
+			//);
 
 			LoadAveragePerformance();
 		}
@@ -126,25 +126,25 @@ namespace Machine_Performance_Management.Chart
 
         private void LoadAveragePerformance()
         {
-            var grouped = data
-                .GroupBy(x => "Tất cả") // gom hết lại 1 cột
-                .Select(g => new
-                {
-                    Key = g.Key,
-                    AvgPerformance = g.Average(r => r.DailyPerformance)
-                })
-                .ToList();
+            //var grouped = data
+                //.GroupBy(x => "Tất cả") // gom hết lại 1 cột
+                //.Select(g => new
+                //{
+                //    Key = g.Key,
+                //    AvgPerformance = g.Average(r => r.DailyPerformance)
+                //})
+                //.ToList();
 
             Series = new SeriesCollection
         {
             new ColumnSeries
             {
                 Title = "Hiệu suất trung bình (all)",
-                Values = new ChartValues<double>(grouped.Select(x => x.AvgPerformance))
+                //Values = new ChartValues<double>(grouped.Select(x => x.AvgPerformance))
             }
         };
 
-            Labels = grouped.Select(x => x.Key).ToArray();
+            //Labels = grouped.Select(x => x.Key).ToArray();
             YFormatter = v => v.ToString("F2") + "%";
 
             OnPropertyChanged(nameof(Series));
@@ -153,35 +153,35 @@ namespace Machine_Performance_Management.Chart
 
         private void LoadPerformanceByItem(DateTime? date = null)
         {
-            var filtered = date.HasValue
-                ? data.Where(x => x.Date == date.Value.ToString("dd.MM")) // Chuyển DateTime sang chuỗi "06.08"
-                : data;
+            //var filtered = date.HasValue
+            //    ? data.Where(x => x.Date == date.Value.ToString("dd.MM")) // Chuyển DateTime sang chuỗi "06.08"
+            //    : data;
             //var filtered = !string.isnullorempty(date)
             //    ? data.where(x => x.date == date)
             //    : data;
 
-            var grouped = filtered
-                .Where(x => !string.IsNullOrWhiteSpace(x.Item))
-                .GroupBy(x => x.Item)
-                .Select(g => new
-                {
-                    Item = g.Key,
-                    AvgPerformance = g.Average(r => r.DailyPerformance)
-                })
-                .OrderBy(x => x.Item)
-                .ToList();
+            //var grouped = filtered
+            //    .Where(x => !string.IsNullOrWhiteSpace(x.Item))
+            //    .GroupBy(x => x.Item)
+            //    .Select(g => new
+            //    {
+            //        Item = g.Key,
+            //        AvgPerformance = g.Average(r => r.DailyPerformance)
+            //    })
+            //    .OrderBy(x => x.Item)
+            //    .ToList();
 
             Series = new SeriesCollection
     {
         new ColumnSeries
         {
             Title = "Theo loại máy",
-            Values = new ChartValues<double>(grouped.Select(x => x.AvgPerformance))
+            //Values = new ChartValues<double>(grouped.Select(x => x.AvgPerformance))
         }
     };
 
-            Labels = grouped.Select(x => x.Item).ToArray();
-            YFormatter = v => v.ToString("F2") + "%";
+            //Labels = grouped.Select(x => x.Item).ToArray();
+            //YFormatter = v => v.ToString("F2") + "%";
 
             OnPropertyChanged(nameof(Series));
             OnPropertyChanged(nameof(Labels));
@@ -189,31 +189,31 @@ namespace Machine_Performance_Management.Chart
 
         private void LoadPerformanceByMachine(DateTime? date = null)
         {
-            var filtered = date.HasValue
-    ? data.Where(x => x.Date == date.Value.ToString("dd.MM")) // Chuyển DateTime sang chuỗi "06.08"
-    : data;
+            //var filtered = date.HasValue
+            //? data.Where(x => x.Date == date.Value.ToString("dd.MM")) // Chuyển DateTime sang chuỗi "06.08"
+            //: data;
 
-            var grouped = filtered
-                .Where(x => !string.IsNullOrWhiteSpace(x.Machine_Name))
-                .GroupBy(x => x.Machine_Name)
-                .Select(g => new
-                {
-                    Machine = g.Key,
-                    AvgPerformance = g.Average(r => r.DailyPerformance)
-                })
-                .OrderBy(x => x.Machine)
-                .ToList();
+            //var grouped = filtered
+            //    .Where(x => !string.IsNullOrWhiteSpace(x.Machine_Name))
+            //    .GroupBy(x => x.Machine_Name)
+            //    .Select(g => new
+            //    {
+            //        Machine = g.Key,
+            //        AvgPerformance = g.Average(r => r.DailyPerformance)
+            //    })
+            //    .OrderBy(x => x.Machine)
+            //    .ToList();
 
             Series = new SeriesCollection
     {
         new ColumnSeries
         {
             Title = "Theo máy",
-            Values = new ChartValues<double>(grouped.Select(x => x.AvgPerformance))
+            //Values = new ChartValues<double>(grouped.Select(x => x.AvgPerformance))
         }
     };
 
-            Labels = grouped.Select(x => x.Machine).ToArray();
+            //Labels = grouped.Select(x => x.Machine).ToArray();
             YFormatter = v => v.ToString("F2") + "%";
 
             OnPropertyChanged(nameof(Series));

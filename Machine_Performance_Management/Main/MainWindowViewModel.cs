@@ -2,7 +2,9 @@
 using CommunityToolkit.Mvvm.Input;
 using Machine_Performance_Management.Admin;
 using Machine_Performance_Management.Home;
+using Machine_Performance_Management.Login;
 using Machine_Performance_Management.Performance;
+using System.Windows;
 using System.Windows.Input;
 namespace Machine_Performance_Management.Main
 {
@@ -84,6 +86,9 @@ namespace Machine_Performance_Management.Main
 
         private ICommand _clickAdmin;
         public ICommand ClickAdmin => _clickAdmin ?? (_clickAdmin = new RelayCommand(MenuAdmin));
+
+        private ICommand _clickLogOut;
+        public ICommand ClickLogOut => _clickLogOut ?? (_clickLogOut = new RelayCommand(MenuLogOut));
         public MainWindowViewModel(string username, string role, string fullname)
         {
             UserName = username;
@@ -115,7 +120,16 @@ namespace Machine_Performance_Management.Main
 			SelectedMenuItem = "Admin";
 		}
 
+
+        public void MenuLogOut()
+        {
+            // Đóng MainWindow
+            // Đóng toàn bộ ứng dụng
+            Application.Current.Shutdown();
+
+            // Mở LoginView (có thể được thực hiện ở một nơi khác, thường là trong App.xaml.cs)
+            var loginWindow = new LoginView();
+            loginWindow.Show();
+        }
     }
-        
-    
 }

@@ -18,10 +18,10 @@ using System.Windows.Input;
 
 namespace Machine_Performance_Management.Performance
 {
-	public class PerformanceViewModel : ObservableObject
+    public class PerformanceViewModel : ObservableObject
     {
-		#region Khai báo
-		protected PerformanceModel performanceModel = new PerformanceModel();
+        #region Khai báo
+        protected PerformanceModel performanceModel = new PerformanceModel();
 
         private ObservableCollection<DevicePerformance> _perFormanceData;
         public ObservableCollection<DevicePerformance> PerFormanceData
@@ -97,19 +97,20 @@ namespace Machine_Performance_Management.Performance
             }
         }
 
-        private List<DevicePerformance1> DataGrid;
-
         public event Action ImportCompleted;
-		#endregion
+        #endregion
 
-		private ICommand clickButtonImportCommand;
+        private ICommand clickButtonImportCommand;
         public ICommand ImportCommand => clickButtonImportCommand ?? (clickButtonImportCommand = new RelayCommand(ClickImportButton));
+
+        private ICommand _chartClickCommand;
+        public ICommand ChartClickCommand => _chartClickCommand ?? (_chartClickCommand = new RelayCommand(ClickCharttButton));
 
 
         public PerformanceViewModel(string fullname)
         {
             Fullname = fullname;
-            PerFormanceData = new ObservableCollection<DevicePerformance>();
+            //PerFormanceData = new ObservableCollection<DevicePerformance>();
             LoadFactoryItems();
             LoadData();
         }
@@ -118,38 +119,27 @@ namespace Machine_Performance_Management.Performance
         {
             var data = performanceModel.LoadPerformanceMachineList(SelectedFactoryItemDataManagement);
             PerFormanceData = new ObservableCollection<DevicePerformance>(data);
+            // DateHeaders = data
+            //.SelectMany(d => d.DailyPerformance.Keys)
+            //.Distinct()
+            //.OrderBy(d => d)
+            //.ToList();
+            // ImportCompleted?.Invoke();
+
+            PerFormanceData.Clear();
+            foreach (var item in data)
+            {
+                PerFormanceData.Add(item);
+            }
             DateHeaders = data
-           .SelectMany(d => d.DailyPerformance.Keys)
-           .Distinct()
-           .OrderBy(d => d)
-           .ToList();
+            .SelectMany(d => d.DailyPerformance.Keys)
+            .Distinct()
+            .OrderBy(d => d)
+            .ToList();
             ImportCompleted?.Invoke();
+            // Hiển thị thông tin của máy đầu tiên trong danh sách
 
-            //DataGrid = new List<DevicePerformance1>();
-            //foreach (var d in data)
-            //{
-            //    foreach (var date in d.DailyPerformance.Keys)
-            //    {
-            //        DataGrid.Add(new DevicePerformance1
-            //        {
-            //            Date = date,
-            //            Factory = d.Factory,
-            //            Item = d.Item,
-            //            Machine_Name = d.Machine_Name,
-            //            //Performance_ST = d.Performance_ST.ContainsKey(date) ? d.Performance_ST[date] : 0,
-            //            DailyPerformance = d.DailyPerformance.ContainsKey(date) ? d.DailyPerformance[date] : 0,
-            //            Performance_Target = d.Performance_Target.ContainsKey(date) ? d.Performance_Target[date] : 0,
-            //            Performance_Completed = d.Performance_Completed.ContainsKey(date) ? d.Performance_Completed[date] : 0,
-            //            Reason = d.Reason.ContainsKey(date) ? d.Reason[date] : null
-            //        });
-            //    }
-            //}
 
-            //DataGrid = new List<DevicePerformance1>();
-            //if (dataList.Any())
-            //{
-            //    DataGrid.AddRange(dataList);
-            //}
         }
 
         public void LoadFactoryItems()
@@ -184,52 +174,33 @@ namespace Machine_Performance_Management.Performance
 
                 try
                 {
-                    var dataList = performanceModel.ReadExcelData(filePath);
-
-                    if (dataList == null || dataList.Count == 0)
+                    // gọi ReadExcelData với out
+                    if (!performanceModel.ReadExcelData(filePath, out var dataList)
+                        || dataList == null || dataList.Count == 0)
                     {
-                        MessageBox.Show("Không có dữ liệu để import", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show("Không có dữ liệu để import", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
 
-                    var insertList = new List<DevicePerformance1>();
-                    foreach (var d in dataList)
-                    {
-                        foreach (var date in d.DailyPerformance.Keys)
-                        {
-                            insertList.Add(new DevicePerformance1
-                            {
-                                Date = date,
-                                Factory = d.Factory,
-                                Item = d.Item,
-                                Machine_Name = d.Machine_Name,
-
-                                DailyPerformance = d.DailyPerformance.ContainsKey(date) ? d.DailyPerformance[date] : 0,
-                                Performance_Target = d.Performance_Target.ContainsKey(date) ? d.Performance_Target[date] : 0,
-                                Performance_Completed = d.Performance_Completed.ContainsKey(date) ? d.Performance_Completed[date] : 0,
-                                Reason = d.Reason.ContainsKey(date) ? d.Reason[date] : null
-                            });
-                        }
-                    }
-
-					DataGrid = new List<DevicePerformance1>();
-					if (insertList.Any())
-					{
-						DataGrid.AddRange(insertList);
-					}
-
-					performanceModel.InsertToDatabase(insertList, Fullname);
+                    // Clear và nạp dữ liệu mới
                     PerFormanceData.Clear();
                     foreach (var item in dataList)
                     {
                         PerFormanceData.Add(item);
                     }
+
+                    // Lấy danh sách header ngày
                     DateHeaders = dataList
-                    .SelectMany(d => d.DailyPerformance.Keys)
-                    .Distinct()
-                    .OrderBy(d => d)
-                    .ToList();
+                        .SelectMany(d => d.DailyPerformance.Keys)
+                        .Distinct()
+                        .OrderBy(d => d)
+                        .ToList();
+
+                    // Event thông báo hoàn tất
                     ImportCompleted?.Invoke();
+
+                    // Ghi DB
+                    performanceModel.InsertToDatabase(dataList, Fullname);
 
                     MessageBox.Show("Import thành công!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
@@ -240,5 +211,20 @@ namespace Machine_Performance_Management.Performance
             }
         }
 
+
+        public void ClickCharttButton()
+        {
+   //         if (PerFormanceData != null && PerFormanceData.Any())
+   //         {
+   //             var detail = new ChartView(PerFormanceData); // ✅ truyền cả danh sách
+   //             detail.ShowDialog();
+   //         }
+   //         else
+			//{
+   //             MessageBox.Show("Không có dữ liệu cho biểu đồ!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+   //         }                
+        }
+
+        private List<DevicePerformance1> data;
     }
 }

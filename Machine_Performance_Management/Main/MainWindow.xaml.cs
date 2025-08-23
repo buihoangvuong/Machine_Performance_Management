@@ -1,4 +1,5 @@
-﻿using Machine_Performance_Management.Main;
+﻿using Machine_Performance_Management.Login;
+using Machine_Performance_Management.Main;
 using OfficeOpenXml;
 using System.Windows;
 
@@ -23,5 +24,13 @@ namespace Machine_Performance_Management.Main
             };
             DataContext = mainWindowViewModel;
         }
-    }
+
+		private void LogoutButton_Click(object sender, RoutedEventArgs e)
+		{
+            LoginView loginWindow = new LoginView(); // Tạo LoginView mới
+            loginWindow.Show(); // Hiển thị LoginView
+
+            this.Close(); // Đóng MainWindow
+        }
+	}
 }

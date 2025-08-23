@@ -7,79 +7,146 @@
              xmlns:viewmodel="clr-namespace:Machine_Performance_Management.Performance"
              d:DataContext="{d:DesignInstance Type=viewmodel:PerformanceViewModel}"
              
-             Background="{DynamicResource BackgroundBrush}"
+             Background="#1F1C2C"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="100"/>
             <RowDefinition Height="55*" />
             <RowDefinition Height="7*" />
         </Grid.RowDefinitions>
 
-        <Border BorderThickness="1" Grid.Row="0">
-            <Grid Grid.Row="0">
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0"></Grid>
+            <StackPanel>
+                <TextBlock Text="설비 가동율 관리 현황"
+                           Foreground="DeepSkyBlue" FontSize="20"/>
+                <DockPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Ellipse Fill="Red" Width="10" Height="10" Margin="0,0,5,0" />
+                        <TextBlock Text="60% 이하" VerticalAlignment="Center" Foreground="#D3D3D3"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Ellipse Fill="Orange" Width="10" Height="10" Margin="0,0,5,0" />
+                        <TextBlock Text="61% ~ 85%" VerticalAlignment="Center"  Foreground="#D3D3D3"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Ellipse Fill="Green" Width="10" Height="10" Margin="0,0,5,0" />
+                        <TextBlock Text="86% 이상" VerticalAlignment="Center"  Foreground="#D3D3D3"/>
+                    </StackPanel>
+                </DockPanel>
+            </StackPanel>
+            <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2.5*"/>
-                    <ColumnDefinition Width="2.5*"/>
-                    <ColumnDefinition Width="2.5*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="1.5*"/>
+                    <!-- Factory -->
+                    <ColumnDefinition Width="2*"/>
+                    <!-- Machine Type -->
+                    <ColumnDefinition Width="5*"/>
+                    <!-- Date Filter -->
+                    <ColumnDefinition Width="1*"/>
+                    <!-- Buttons -->
                 </Grid.ColumnDefinitions>
 
-                <DockPanel Grid.Column="0" HorizontalAlignment="Left" Margin="20">
-                <TextBlock
-                Text="Factory:"
-                FontWeight="Bold"
-                Height="25" Width="100"/>
+                <!-- Factory -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+                    <TextBlock Text="Factory:"
+               FontWeight="Bold" Foreground="#D3D3D3"
+               VerticalAlignment="Center"
+               Width="60"
+               FontSize="14"/>
+                    <ComboBox Height="30" Width="120"
+              ItemsSource="{Binding FactoryitemDataManagement}"
+              SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}"
+              Margin="5 0 0 0"
+              FontSize="14"/>
+                </StackPanel>
 
-                <ComboBox
-                Height="25" Width="100"
-                ItemsSource="{Binding FactoryitemDataManagement}"
-                SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}"
-                    />
-            </DockPanel>
+                <!-- Machine Type -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+                    <TextBlock Text="Machine Type:"
+               FontWeight="Bold" Foreground="#D3D3D3"
+               VerticalAlignment="Center"
+               Width="100"
+               FontSize="14"/>
+                    <ComboBox Height="30" Width="140"
+              ItemsSource="{Binding MachineTypeDataItem}"
+              SelectedItem="{Binding SelectedMachineTypeItem, Mode=TwoWay}"
+              Margin="5 0 0 0"
+              FontSize="14"/>
+                </StackPanel>
 
-            <DockPanel Grid.Column="1" HorizontalAlignment="Left">
-                <TextBlock
-                Text="Month:"
-                FontWeight="Bold"
-                Height="25" Width="100"/>
+                <!-- Date Filter -->
+                <Grid Grid.Column="2" Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <ComboBox
-                Height="25" Width="100"/>
-            </DockPanel>
+                    <!-- Label -->
+                    <Label Grid.Column="0"
+           Content="*Date:"
+           VerticalAlignment="Center"
+           FontSize="14"
+           FontWeight="Bold" Foreground="#D3D3D3"
+           Margin="0 0 5 0"/>
 
-                <DockPanel Grid.Column="2" HorizontalAlignment="Left">
-                <TextBlock
-                Text="Year:"
-                FontWeight="Bold"
-                Height="25" Width="100"/>
+                    <!-- DatePicker From -->
+                    <DatePicker Grid.Column="1"
+                SelectedDate="{Binding DateFrom}"
+                Height="30" Width="150"
+                FontSize="14"
+                VerticalContentAlignment="Center"
+                Margin="0 0 10 0"/>
 
-                <ComboBox
-                Height="25" Width="100"/>
-            </DockPanel>
+                    <!-- Separator -->
+                    <Label Grid.Column="2"
+           Content="~"
+           VerticalAlignment="Center"
+           FontSize="16"
+           FontWeight="Bold" Foreground="#D3D3D3"
+           Margin="5 0"/>
 
-                <!--<Button Grid.Column="3"
-                    HorizontalAlignment="Left"
-                    Command="{Binding ImportCommand}"
-                    Content="📥 Import" 
-                     Height="25" Width="100"/>-->
+                    <!-- DatePicker To -->
+                    <DatePicker Grid.Column="3"
+                SelectedDate="{Binding DateTo}"
+                Height="30" Width="150"
+                FontSize="14"
+                VerticalContentAlignment="Center"
+                Margin="10 0 0 0"/>
 
-                <Button Grid.Column="3"  Margin="0 0 5 0"
-                Command="{Binding ImportCommand}"
-                            Style="{StaticResource ButtonStyleSmall}"
-                            Cursor="Hand"
-                            VerticalAlignment="Center"
-                            ToolTip="Import dữ liệu từ QR"
-                            DockPanel.Dock="Right"
-                    HorizontalAlignment="Left">
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <TextBlock Text="📥" FontSize="16"/>
+                    <!-- Search Button -->
+                    <Button Grid.Column="4"
+                Content="🔍 Search"
+                Margin="100 0 0 0"
+                Command="{Binding SearchCommand}"
+                Style="{StaticResource ButtonStyleSmall}"/>
+                </Grid>
+
+                <!-- Import Button -->
+                <Button Grid.Column="3"
+        Command="{Binding ImportCommand}"
+        Style="{StaticResource ButtonStyleSmall}">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="📥" FontSize="16" Margin="0 0 5 0"/>
                         <TextBlock Text="Import Data" FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
+
             </Grid>
-        </Border>
+        </Grid>
+
+        <!--<Border BorderThickness="1" BorderBrush="#DDDDDD" CornerRadius="8" Padding="15" Margin="10" Background="#FAFAFA">
+        </Border>-->
 
         <Border BorderThickness="1" Grid.Row="1">
             <DataGrid  x:Name="MyDataGrid" Margin="10" Background="{DynamicResource BackgroundBrush}"
@@ -90,34 +157,8 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Auto"
                   ScrollViewer.VerticalScrollBarVisibility="Auto"
                   IsReadOnly="True"
+                       SelectionUnit="Cell"
                    MouseLeftButtonUp="DataGrid_MouseDoubleClick">
-
-                <!--<DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <DataTrigger>
-                            <Setter Property="Background" Value="AliceBlue"/>
-                            <Setter Property="Foreground" Value="Black"/>
-                            <Setter Property="FontWeight" Value="DemiBold"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>-->
-
-                <!--<DataGrid.CellStyle>
-                    <Style TargetType="DataGridCell">
-                        <Setter Property="BorderBrush" Value="LightGray"/>
-                        <Setter Property="BorderThickness" Value="0.5"/>
-                        <Style.Triggers>
-                            --><!-- Khi ô được chọn --><!--
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="#FFFFCC"/>
-                                <Setter Property="Foreground" Value="Black"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </DataGrid.CellStyle>-->
-
 
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
@@ -142,27 +183,6 @@
                     <DataGridTextColumn Header="Machine Type" Binding="{Binding Item}" Width="95"/>
                     <DataGridTextColumn Header="Machine Name" Binding="{Binding Machine_Name}" Width="115"/>
 
-                    <!--<DataGridTemplateColumn Header="Machine Name" Width="120">
-
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Machine_Name}" 
-                                   Foreground="Blue" 
-                                   Cursor="Hand"
-                                   TextWrapping="Wrap" 
-                                   TextDecorations="Underline">
-                            <i:Interaction.Triggers>
-                                <i:EventTrigger EventName="MouseLeftButtonUp">
-                                    <i:InvokeCommandAction Command="{Binding DataContext.MachineNameClickCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" 
-                                                           CommandParameter="{Binding}" />
-                                </i:EventTrigger>
-                            </i:Interaction.Triggers>
-                            </TextBlock>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>-->
-
-
                     <!-- Cột ngày sẽ thêm động ở code-behind -->
 
                     <DataGridTextColumn Header="Average" Binding="{Binding AveragePerformance, StringFormat={}{0:F2}}" 
@@ -177,7 +197,7 @@
                     Style="{StaticResource ButtonStyleSmall}"
                     Width="100"
                     HorizontalAlignment="Left"
-                    Command="{Binding MachineNameClickCommand}"/>
+                    Command="{Binding ChartClickCommand}"/>
         </Grid>
         <!-- Popup hiển thị chi tiết -->
         <Popup x:Name="DetailPopup"
@@ -207,9 +227,6 @@
                     <TextBlock x:Name="PopupReason" Margin="5"/>
                     <Separator Margin="0,2"/>
                     
-                    <!--<Button Content="Close" Margin="0,10,0,0" Width="80" 
-                            HorizontalAlignment="Right"
-                            Click="ClosePopup_Click"/>-->
                 </StackPanel>
             </Border>
         </Popup>

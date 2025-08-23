@@ -143,7 +143,7 @@ namespace Machine_Performance_Management.Performance
             AddDynamicDateColumns(MyDataGrid, viewModel.DateHeaders);
         }
 
-        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        private void DataGrid_MouseDoubleClick1(object sender, MouseButtonEventArgs e)
         {
             var grid = sender as DataGrid;
             if (grid == null) return;
@@ -192,59 +192,125 @@ namespace Machine_Performance_Management.Performance
                 return;
             }
 
-            if (grid.SelectedItem is DevicePerformance device)
+            if (cell != null)
             {
-                if (device.Performance_ST.ContainsKey(dateHeader) &&
-                    device.Performance_Target.ContainsKey(dateHeader) &&
-                    device.Performance_Completed.ContainsKey(dateHeader) &&
-                    device.Reason.ContainsKey(dateHeader))
+                // lấy DevicePerformance từ cell (DataContext của row)
+                if (cell.DataContext is DevicePerformance device)
                 {
-                    string model = device.Machine_Name;
-                    double st = device.Performance_ST[dateHeader];
-                    double target = device.Performance_Target[dateHeader];
-                    double completed = device.Performance_Completed[dateHeader];
-                    string reason = device.Reason[dateHeader];
-
-                    // Gán dữ liệu cho popup với nhiều màu
-                    PopupModel.Inlines.Clear();
-                    PopupModel.Inlines.Add(new Run("🖥️ ")
+                    if (device.Performance_ST.ContainsKey(dateHeader) &&
+                        device.Performance_Target.ContainsKey(dateHeader) &&
+                        device.Performance_Completed.ContainsKey(dateHeader) &&
+                        device.Reason.ContainsKey(dateHeader))
                     {
-                        Foreground = (Brush)new BrushConverter().ConvertFromString("#00B4DB") // xanh dương
-                    }); 
-                    PopupModel.Inlines.Add(new Run("Model: ") { Foreground = Brushes.Black });
-                    PopupModel.Inlines.Add(new Run(model) { Foreground = Brushes.Black });
+                        string model = device.Machine_Name;
+                        double st = device.Performance_ST[dateHeader];
+                        double target = device.Performance_Target[dateHeader];
+                        double completed = device.Performance_Completed[dateHeader];
+                        string reason = device.Reason[dateHeader];
 
-                    PopupST.Inlines.Clear();
-                    PopupST.Inlines.Add(new Run("🎯 ")
-                    {
-                        Foreground = (Brush)new BrushConverter().ConvertFromString("#00B4DB") // xanh dương
-                    });
-                    PopupST.Inlines.Add(new Run("ST: ") { Foreground = Brushes.Black });
-                    PopupST.Inlines.Add(new Run(st.ToString()) { Foreground = Brushes.Black });
+                        // Gán dữ liệu cho popup với nhiều màu
+                        PopupModel.Inlines.Clear();
+                        PopupModel.Inlines.Add(new Run("🖥️ ") { Foreground = Brushes.DodgerBlue });
+                        PopupModel.Inlines.Add(new Run("Model: ") { Foreground = Brushes.Black });
+                        PopupModel.Inlines.Add(new Run(model) { Foreground = Brushes.Red });
 
-                    PopupCompleted.Inlines.Clear();
-                    PopupCompleted.Inlines.Add(new Run("✅ ")
-                    {
-                        Foreground = (Brush)new BrushConverter().ConvertFromString("#00B4DB") // xanh dương
-                    });
-                    PopupCompleted.Inlines.Add(new Run("Completed: ") { Foreground = Brushes.Black });
-                    PopupCompleted.Inlines.Add(new Run($"{completed} / {target}") { Foreground = Brushes.Black });
+                        PopupST.Inlines.Clear();
+                        PopupST.Inlines.Add(new Run("🎯 ") { Foreground = Brushes.DodgerBlue });
+                        PopupST.Inlines.Add(new Run("ST: ") { Foreground = Brushes.Black });
+                        PopupST.Inlines.Add(new Run(st.ToString()) { Foreground = Brushes.Red });
 
-                    PopupReason.Inlines.Clear();
-                    PopupReason.Inlines.Add(new Run("🕒 ")
-                    {
-                        Foreground = (Brush)new BrushConverter().ConvertFromString("#00B4DB") // xanh dương
-                    });
-                    PopupReason.Inlines.Add(new Run("Reason: ") { Foreground = Brushes.Black });
-                    PopupReason.Inlines.Add(new Run(reason) { Foreground = Brushes.Black });
+                        PopupCompleted.Inlines.Clear();
+                        PopupCompleted.Inlines.Add(new Run("✅ ") { Foreground = Brushes.DodgerBlue });
+                        PopupCompleted.Inlines.Add(new Run("Completed: ") { Foreground = Brushes.Black });
+                        PopupCompleted.Inlines.Add(new Run($"{completed} / {target}") { Foreground = Brushes.Red });
 
-                    DetailPopup.IsOpen = true;
-                    return;
+                        PopupReason.Inlines.Clear();
+                        PopupReason.Inlines.Add(new Run("🕒 ") { Foreground = Brushes.DodgerBlue });
+                        PopupReason.Inlines.Add(new Run("Reason: ") { Foreground = Brushes.Black });
+                        PopupReason.Inlines.Add(new Run(reason) { Foreground = Brushes.Red });
+
+                        DetailPopup.IsOpen = true;
+                        return;
+                    }
                 }
             }
 
             DetailPopup.IsOpen = false;
         }
 
+        private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var grid = sender as DataGrid;
+            if (grid == null) return;
+
+            // Nếu chưa chọn cell thì return
+            if (grid.CurrentCell == null || grid.CurrentItem == null)
+            {
+                DetailPopup.IsOpen = false;
+                return;
+            }
+
+            // Row data (object được bind)
+            var device = grid.CurrentItem as DevicePerformance;
+            if (device == null)
+            {
+                DetailPopup.IsOpen = false;
+                return;
+            }
+
+            // Column được double click
+            var column = grid.CurrentCell.Column as DataGridTextColumn;
+            if (column == null)
+            {
+                DetailPopup.IsOpen = false;
+                return;
+            }
+
+            string header = column.Header?.ToString();
+            if (string.IsNullOrEmpty(header) ||
+                header == "NO" ||
+                header == "Factory" ||
+                header == "Machine Name" ||
+                header == "Average")
+            {
+                DetailPopup.IsOpen = false;
+                return;
+            }
+
+            // Kiểm tra dictionary có key = header không
+            if (device.Performance_ST.TryGetValue(header, out double st) &&
+                device.Performance_Target.TryGetValue(header, out double target) &&
+                device.Performance_Completed.TryGetValue(header, out double completed) &&
+                device.Reason.TryGetValue(header, out string reason))
+            {
+                // Hiển thị dữ liệu đẹp hơn
+                PopupModel.Inlines.Clear();
+                PopupModel.Inlines.Add(new Run("🖥️ ") { Foreground = Brushes.DodgerBlue });
+                PopupModel.Inlines.Add(new Run("Model: ") { Foreground = Brushes.Black });
+                PopupModel.Inlines.Add(new Run(device.Machine_Name) { Foreground = Brushes.Red });
+
+                PopupST.Inlines.Clear();
+                PopupST.Inlines.Add(new Run("🎯 ") { Foreground = Brushes.DodgerBlue });
+                PopupST.Inlines.Add(new Run("ST: ") { Foreground = Brushes.Black });
+                PopupST.Inlines.Add(new Run(st.ToString()) { Foreground = Brushes.Red });
+
+                PopupCompleted.Inlines.Clear();
+                PopupCompleted.Inlines.Add(new Run("✅ ") { Foreground = Brushes.DodgerBlue });
+                PopupCompleted.Inlines.Add(new Run("Completed: ") { Foreground = Brushes.Black });
+                PopupCompleted.Inlines.Add(new Run($"{completed} / {target}") { Foreground = Brushes.Red });
+
+                PopupReason.Inlines.Clear();
+                PopupReason.Inlines.Add(new Run("🕒 ") { Foreground = Brushes.DodgerBlue });
+                PopupReason.Inlines.Add(new Run("Reason: ") { Foreground = Brushes.Black });
+                PopupReason.Inlines.Add(new Run(reason) { Foreground = Brushes.Red });
+
+                DetailPopup.PlacementTarget = grid; // gắn popup gần grid
+                DetailPopup.IsOpen = true;
+            }
+            else
+            {
+                DetailPopup.IsOpen = false;
+            }
+        }
     }
 }
