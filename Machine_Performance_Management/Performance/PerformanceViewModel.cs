@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using LiveCharts;
 using Machine_Performance_Management.Chart;
 using Machine_Performance_Management.Common;
 using Microsoft.Win32;
@@ -119,12 +120,6 @@ namespace Machine_Performance_Management.Performance
         {
             var data = performanceModel.LoadPerformanceMachineList(SelectedFactoryItemDataManagement);
             PerFormanceData = new ObservableCollection<DevicePerformance>(data);
-            // DateHeaders = data
-            //.SelectMany(d => d.DailyPerformance.Keys)
-            //.Distinct()
-            //.OrderBy(d => d)
-            //.ToList();
-            // ImportCompleted?.Invoke();
 
             PerFormanceData.Clear();
             foreach (var item in data)
@@ -138,8 +133,6 @@ namespace Machine_Performance_Management.Performance
             .ToList();
             ImportCompleted?.Invoke();
             // Hiển thị thông tin của máy đầu tiên trong danh sách
-
-
         }
 
         public void LoadFactoryItems()

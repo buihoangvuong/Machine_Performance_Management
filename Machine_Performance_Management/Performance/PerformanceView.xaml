@@ -1,9 +1,12 @@
-﻿<UserControl x:Class="Machine_Performance_Management.Performance.PerformanceView"
+﻿ <UserControl x:Class="Machine_Performance_Management.Performance.PerformanceView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
+             
+                     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             
              xmlns:viewmodel="clr-namespace:Machine_Performance_Management.Performance"
              d:DataContext="{d:DesignInstance Type=viewmodel:PerformanceViewModel}"
              
@@ -26,7 +29,7 @@
             <Grid Grid.Row="0"></Grid>
             <StackPanel>
                 <TextBlock Text="설비 가동율 관리 현황"
-                           Foreground="DeepSkyBlue" FontSize="20"/>
+                           Foreground="DeepSkyBlue" FontSize="20" FontWeight="SemiBold"/>
                 <DockPanel>
                     <StackPanel Orientation="Horizontal" Margin="5">
                         <Ellipse Fill="Red" Width="10" Height="10" Margin="0,0,5,0" />
@@ -57,18 +60,78 @@
                 <!-- Factory -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
                     <TextBlock Text="Factory:"
-               FontWeight="Bold" Foreground="#D3D3D3"
+               FontWeight="Bold"
+               Foreground="#D3D3D3"
                VerticalAlignment="Center"
                Width="60"
                FontSize="14"/>
-                    <ComboBox Height="30" 
-                      Width="120"
+
+                    <ComboBox Height="30" Width="120"
                       ItemsSource="{Binding FactoryitemDataManagement}"
                       SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}"
                       Margin="5 0 0 0"
                       FontSize="14"
-                      Style="{StaticResource ModernDarkComboBoxStyle}"
-                      />
+                      BorderBrush="#949ba8"
+                      BorderThickness="1"
+                      Background="#1e1e2f"
+                      >
+
+                        <ComboBox.Template>
+                            <ControlTemplate TargetType="ComboBox">
+                                <Grid>
+                                    <!-- Border bao quanh ComboBox -->
+                                    <Border x:Name="Border"
+                                    CornerRadius="6"
+                                    Background="{TemplateBinding Background}"  
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}">
+                                    <ContentPresenter Margin="4"
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Center"
+                                      RecognizesAccessKey="True"/>
+                                    </Border>
+
+                                   
+                                </Grid>
+                            </ControlTemplate>
+                        </ComboBox.Template>
+
+                        <ComboBox.ItemContainerStyle>
+                            <Style TargetType="ComboBoxItem">
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Padding" Value="8,4"/>
+                                <Setter Property="Background" Value="#1e1e2f"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ComboBoxItem">
+                                            <Border x:Name="Border"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <!-- Hover -->
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="Border" Property="Background" Value="#949ba8"/>
+                                                </Trigger>
+                                                <!-- Selected -->
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter TargetName="Border" Property="Background" Value="#949ba8"/>
+                                                    <Setter Property="Foreground" Value="White"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ComboBox.ItemContainerStyle>
+                        
+                    </ComboBox>
+
+
+
+
+
                 </StackPanel>
 
                 <!-- Machine Type -->
@@ -153,23 +216,23 @@
 
         <Border BorderThickness="1" Grid.Row="1" CornerRadius="10" BorderBrush="#404040" ClipToBounds="True">
             <DataGrid x:Name="MyDataGrid" 
-              Margin="5"
-              Background="Transparent"
-              ItemsSource="{Binding PerFormanceData}"
-              AutoGenerateColumns="False"
-              CanUserAddRows="False"
-              ScrollViewer.HorizontalScrollBarVisibility="Auto"
-              ScrollViewer.VerticalScrollBarVisibility="Auto"
-              IsReadOnly="True"
-              SelectionUnit="Cell"
-              MouseLeftButtonUp="DataGrid_MouseDoubleClick"
-              GridLinesVisibility="None"
-              HeadersVisibility="Column"
-              RowBackground="#1e1e2f"
-              BorderThickness="0"
-              AlternatingRowBackground="#21213a">
+       Margin="5"
+       Background="Transparent"
+       ItemsSource="{Binding PerFormanceData}"
+       AutoGenerateColumns="False"
+       CanUserAddRows="False"
+       ScrollViewer.HorizontalScrollBarVisibility="Auto"
+       ScrollViewer.VerticalScrollBarVisibility="Auto"
+       IsReadOnly="True"
+       SelectionUnit="Cell"
+       MouseLeftButtonUp="DataGrid_MouseDoubleClick"
+       GridLinesVisibility="None"
+       HeadersVisibility="Column"
+       RowBackground="#1e1e2f"
+       BorderThickness="0"
+       AlternatingRowBackground="#21213a">
 
-            <DataGrid.Resources>
+                <DataGrid.Resources>
                     <!-- Style cho DataGridCell -->
                     <Style TargetType="DataGridCell">
                         <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -230,36 +293,67 @@
                     HorizontalAlignment="Left"
                     Command="{Binding ChartClickCommand}"/>
         </Grid>
+
         <!-- Popup hiển thị chi tiết -->
         <Popup x:Name="DetailPopup"
-               StaysOpen="False"
-               Placement="MousePoint"
-               AllowsTransparency="True"
-               PopupAnimation="Fade">
-            <Border Background="White" Padding="15" CornerRadius="10" BorderThickness="1" >
-                <StackPanel>
-                    <TextBlock Text="Information Detail"
-                       FontSize="16"
-                       FontWeight="Bold"
-                       Foreground="DarkBlue"
-                       Margin="0,0,0,10"
-                       TextAlignment="Center"/>
-                    <Separator Margin="0,2"/>
-                    
-                    <TextBlock x:Name="PopupModel" Margin="5"/>
-                    <Separator Margin="0,2"/>
-                    
-                    <TextBlock x:Name="PopupCompleted" Margin="5"/>
-                    <Separator Margin="0,2"/>
-                    
-                    <TextBlock x:Name="PopupST" Margin="5"/>
-                    <Separator Margin="0,2"/>
-                    
-                    <TextBlock x:Name="PopupReason" Margin="5"/>
-                    <Separator Margin="0,2"/>
-                    
-                </StackPanel>
+       StaysOpen="False"
+       Placement="MousePoint"
+       AllowsTransparency="True"
+       PopupAnimation="Fade">
+            <Border Background="#1B1C2A"
+            CornerRadius="12"
+            Padding="15"
+            BorderThickness="1"
+            BorderBrush="#333"
+            Height="195" Width="405">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="250"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Donut Chart -->
+                    <Grid Grid.Column="0" Width="150" Height="150">
+                        <lvc:PieChart x:Name="MyPieChart"
+                              HoverPushOut="0"
+                              InnerRadius="50"
+                              LegendLocation="None"
+                              DataTooltip="{x:Null}"
+                              Background="Transparent"
+                              Foreground="Transparent"
+                              >
+                        </lvc:PieChart>
+
+                        <!-- % ở giữa -->
+                        <TextBlock x:Name="DonutPercent"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="Aqua"
+                           FontSize="16"
+                           FontWeight="Bold"/>
+                    </Grid>
+
+                    <!-- Info -->
+                    <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                        <TextBlock><Run Text="Model: " Foreground="White"/>
+                    <Run x:Name="PopupModel" Foreground="Aqua"/>
+                        </TextBlock>
+                        <TextBlock><Run Text="S/T: " Foreground="White"/>
+                    <Run x:Name="PopupST" Foreground="Aqua"/>
+                        </TextBlock>
+                        <TextBlock><Run Text="Capa/일: " Foreground="White"/>
+                    <Run x:Name="PopupTarget" Foreground="Aqua"/>
+                        </TextBlock>
+                        <TextBlock><Run Text="생산량: " Foreground="White"/>
+                    <Run x:Name="PopupCompleted" Foreground="Aqua"/>
+                        </TextBlock>
+                        <TextBlock><Run Text="비고: " Foreground="White"/>
+                    <Run x:Name="PopupReason" Foreground="Aqua"/>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
             </Border>
         </Popup>
+
     </Grid>
 </UserControl>
