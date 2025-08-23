@@ -448,7 +448,7 @@ namespace Machine_Performance_Management.Performance
                             string deviceName = reader["device_name"]?.ToString();
                             string date = reader["date"]?.ToString();
 
-                            double performanceST = reader["daily_performance"] != DBNull.Value ? Convert.ToDouble(reader["daily_performance"]) : 0;
+                            double performanceST = reader["st"] != DBNull.Value ? Convert.ToDouble(reader["st"]) : 0;
                             double dailyPerformance = reader["daily_performance"] != DBNull.Value ? Convert.ToDouble(reader["daily_performance"]) : 0;
                             double performanceTarget = reader["qty_taget"] != DBNull.Value ? Convert.ToDouble(reader["qty_taget"]) : 0;
                             double performanceCompleted = reader["qty_completed"] != DBNull.Value ? Convert.ToDouble(reader["qty_completed"]) : 0;
@@ -465,6 +465,7 @@ namespace Machine_Performance_Management.Performance
                                     Factory = factoryName,
                                     Item = item,
                                     Machine_Name = deviceName,
+                                    Performance_ST = new Dictionary<string, double>(),
                                     DailyPerformance = new Dictionary<string, double>(),
                                     Performance_Target = new Dictionary<string, double>(),
                                     Performance_Completed = new Dictionary<string, double>(),
@@ -472,6 +473,7 @@ namespace Machine_Performance_Management.Performance
                                 };
                             }
                             deviceDict[key].DailyPerformance[date] = dailyPerformance;
+                            deviceDict[key].Performance_Target[date] = performanceTarget;
                             deviceDict[key].Performance_Target[date] = performanceTarget;
                             deviceDict[key].Performance_Completed[date] = performanceCompleted;
                             deviceDict[key].Reason[date] = reason;

@@ -4,6 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
+             
+                     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             
              xmlns:viewmodel="clr-namespace:Machine_Performance_Management.Performance"
              d:DataContext="{d:DesignInstance Type=viewmodel:PerformanceViewModel}"
              
@@ -199,36 +202,67 @@
                     HorizontalAlignment="Left"
                     Command="{Binding ChartClickCommand}"/>
         </Grid>
+        
         <!-- Popup hiển thị chi tiết -->
         <Popup x:Name="DetailPopup"
-               StaysOpen="False"
-               Placement="MousePoint"
-               AllowsTransparency="True"
-               PopupAnimation="Fade">
-            <Border Background="White" Padding="15" CornerRadius="10" BorderThickness="1" >
-                <StackPanel>
-                    <TextBlock Text="Information Detail"
-                       FontSize="16"
-                       FontWeight="Bold"
-                       Foreground="DarkBlue"
-                       Margin="0,0,0,10"
-                       TextAlignment="Center"/>
-                    <Separator Margin="0,2"/>
-                    
-                    <TextBlock x:Name="PopupModel" Margin="5"/>
-                    <Separator Margin="0,2"/>
-                    
-                    <TextBlock x:Name="PopupCompleted" Margin="5"/>
-                    <Separator Margin="0,2"/>
-                    
-                    <TextBlock x:Name="PopupST" Margin="5"/>
-                    <Separator Margin="0,2"/>
-                    
-                    <TextBlock x:Name="PopupReason" Margin="5"/>
-                    <Separator Margin="0,2"/>
-                    
-                </StackPanel>
+       StaysOpen="False"
+       Placement="MousePoint"
+       AllowsTransparency="True"
+       PopupAnimation="Fade">
+            <Border Background="#1B1C2A"
+            CornerRadius="12"
+            Padding="15"
+            BorderThickness="1"
+            BorderBrush="#333"
+            Height="195" Width="405">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="250"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Donut Chart -->
+                    <Grid Grid.Column="0" Width="150" Height="150">
+                        <lvc:PieChart x:Name="MyPieChart"
+                              HoverPushOut="0"
+                              InnerRadius="50"
+                              LegendLocation="None"
+                              DataTooltip="{x:Null}"
+                              Background="Transparent"
+                              Foreground="Transparent"
+                              >
+                        </lvc:PieChart>
+
+                        <!-- % ở giữa -->
+                        <TextBlock x:Name="DonutPercent"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="Aqua"
+                           FontSize="16"
+                           FontWeight="Bold"/>
+                    </Grid>
+
+                    <!-- Info -->
+                    <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
+                        <TextBlock><Run Text="Model: " Foreground="White"/>
+                    <Run x:Name="PopupModel" Foreground="Aqua"/>
+                        </TextBlock>
+                        <TextBlock><Run Text="S/T: " Foreground="White"/>
+                    <Run x:Name="PopupST" Foreground="Aqua"/>
+                        </TextBlock>
+                        <TextBlock><Run Text="Capa/일: " Foreground="White"/>
+                    <Run x:Name="PopupTarget" Foreground="Aqua"/>
+                        </TextBlock>
+                        <TextBlock><Run Text="생산량: " Foreground="White"/>
+                    <Run x:Name="PopupCompleted" Foreground="Aqua"/>
+                        </TextBlock>
+                        <TextBlock><Run Text="비고: " Foreground="White"/>
+                    <Run x:Name="PopupReason" Foreground="Aqua"/>
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
             </Border>
         </Popup>
+
     </Grid>
 </UserControl>
