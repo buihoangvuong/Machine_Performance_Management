@@ -107,6 +107,7 @@ namespace Machine_Performance_Management.Performance
                         }
                     };
                 }
+
                 dataGrid.Columns.Add(col);
             }
 

@@ -61,11 +61,14 @@
                VerticalAlignment="Center"
                Width="60"
                FontSize="14"/>
-                    <ComboBox Height="30" Width="120"
-              ItemsSource="{Binding FactoryitemDataManagement}"
-              SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}"
-              Margin="5 0 0 0"
-              FontSize="14"/>
+                    <ComboBox Height="30" 
+                      Width="120"
+                      ItemsSource="{Binding FactoryitemDataManagement}"
+                      SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}"
+                      Margin="5 0 0 0"
+                      FontSize="14"
+                      Style="{StaticResource ModernDarkComboBoxStyle}"
+                      />
                 </StackPanel>
 
                 <!-- Machine Type -->
@@ -148,32 +151,64 @@
         <!--<Border BorderThickness="1" BorderBrush="#DDDDDD" CornerRadius="8" Padding="15" Margin="10" Background="#FAFAFA">
         </Border>-->
 
-        <Border BorderThickness="1" Grid.Row="1">
-            <DataGrid  x:Name="MyDataGrid" Margin="10" Background="{DynamicResource BackgroundBrush}"
-                  Style="{StaticResource ModernDataGrid}"
-                  ItemsSource="{Binding PerFormanceData}"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  ScrollViewer.VerticalScrollBarVisibility="Auto"
-                  IsReadOnly="True"
-                       SelectionUnit="Cell"
-                   MouseLeftButtonUp="DataGrid_MouseDoubleClick">
+        <Border BorderThickness="1" Grid.Row="1" CornerRadius="10" BorderBrush="#404040" ClipToBounds="True">
+            <DataGrid x:Name="MyDataGrid" 
+              Margin="5"
+              Background="Transparent"
+              ItemsSource="{Binding PerFormanceData}"
+              AutoGenerateColumns="False"
+              CanUserAddRows="False"
+              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+              ScrollViewer.VerticalScrollBarVisibility="Auto"
+              IsReadOnly="True"
+              SelectionUnit="Cell"
+              MouseLeftButtonUp="DataGrid_MouseDoubleClick"
+              GridLinesVisibility="None"
+              HeadersVisibility="Column"
+              RowBackground="#1e1e2f"
+              BorderThickness="0"
+              AlternatingRowBackground="#21213a">
 
-                <DataGrid.Resources>
+            <DataGrid.Resources>
+                    <!-- Style cho DataGridCell -->
                     <Style TargetType="DataGridCell">
                         <Setter Property="HorizontalContentAlignment" Value="Center"/>
                         <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Padding" Value="5"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#404040"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="False"/>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" Value="#404040"/>
+                            </MultiTrigger>
+                        </Style.Triggers>
                     </Style>
+
                 </DataGrid.Resources>
 
+                <!-- Style cho header -->
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
-                        <Setter Property="Background" Value="#2980B9"/>
-                        <Setter Property="Foreground" Value="White"/>
-                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="Background" Value="#25253a"/>
+                        <Setter Property="Foreground" Value="#949ba8"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="FontSize" Value="15"/>
                         <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        <Setter Property="Padding" Value="8 4"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="Padding" Value="8,8"/>
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="BorderThickness" Value="1,1,1,1"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
 
@@ -182,14 +217,10 @@
                     <DataGridTextColumn Header="Factory" Binding="{Binding Factory}" Width="75"/>
                     <DataGridTextColumn Header="Machine Type" Binding="{Binding Item}" Width="95"/>
                     <DataGridTextColumn Header="Machine Name" Binding="{Binding Machine_Name}" Width="115"/>
-
                     <!-- Cột ngày sẽ thêm động ở code-behind -->
-
-                    <DataGridTextColumn Header="Average" Binding="{Binding AveragePerformance, StringFormat={}{0:F2}}" 
-                                    Width="70"/>
+                    <DataGridTextColumn Header="Average" Binding="{Binding AveragePerformance, StringFormat={}{0:F2}}" Width="70"></DataGridTextColumn>
                 </DataGrid.Columns>
             </DataGrid>
-
         </Border>
 
         <Grid Grid.Row="2">
