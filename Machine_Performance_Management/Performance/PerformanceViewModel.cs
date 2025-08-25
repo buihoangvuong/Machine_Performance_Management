@@ -57,28 +57,7 @@ namespace Machine_Performance_Management.Performance
                 OnPropertyChanged(nameof(FactoryitemDataManagement));
             }
         }
-        public ObservableCollection<DevicePerformance1> _dataManagement { get; set; } = new ObservableCollection<DevicePerformance1>();
-
-        public ObservableCollection<DevicePerformance1> DataManagement
-        {
-            get => _dataManagement;
-            set
-            {
-                _dataManagement = value;
-                OnPropertyChanged("DataManagement");
-            }
-        }
-
-        private List<string> _dateHeaders;
-        public List<string> DateHeaders
-        {
-            get => _dateHeaders;
-            set
-            {
-                _dateHeaders = value;
-                OnPropertyChanged(nameof(DateHeaders));
-            }
-        }
+        public ObservableCollection<DevicePerformance1> _dataManagement { get; set; } = new ObservableCollection<DevicePerformance1>();        
 
         private string _selectedFactoryItemDataManagement;
         public string SelectedFactoryItemDataManagement
@@ -92,18 +71,83 @@ namespace Machine_Performance_Management.Performance
 
                     OnPropertyChanged(nameof(SelectedFactoryItemDataManagement));
                     LoadData();
+                    LoadMachineTypeItems();
+
+                }
+
+            }
+        }
+        private ObservableCollection<string> _machineTypeDataItem = new ObservableCollection<string>();
+        public ObservableCollection<string> MachineTypeDataItem
+        {
+            get => _machineTypeDataItem;
+            set
+            {
+                _machineTypeDataItem = value;
+                OnPropertyChanged(nameof(MachineTypeDataItem));
+            }
+        }
+
+        private string _selectedMachineTypeItem;
+        public string SelectedMachineTypeItem
+        {
+            get => _selectedMachineTypeItem;
+            set
+            {
+                if (_selectedMachineTypeItem != value)
+                {
+                    _selectedMachineTypeItem = value;
+
+                    OnPropertyChanged(nameof(SelectedMachineTypeItem));
+                    LoadData();
 
                 }
 
             }
         }
 
+        private DateTime _dateFrom;
+        public DateTime DateFrom
+        {
+            get => _dateFrom;
+            set
+            {
+                SetProperty(ref _dateFrom, value);
+            }
+        }
+
+        private DateTime _dateTo;
+        public DateTime DateTo
+        {
+            get => _dateTo;
+            set
+            {
+                SetProperty(ref _dateTo, value);
+            }
+        }
+
+
+        private List<string> _dateHeaders;
+        public List<string> DateHeaders
+        {
+            get => _dateHeaders;
+            set
+            {
+                _dateHeaders = value;
+                OnPropertyChanged(nameof(DateHeaders));
+            }
+        }
+        
+        
         public event Action ImportCompleted;
         #endregion
 
 
         private ICommand clickButtonImportCommand;
         public ICommand ImportCommand => clickButtonImportCommand ?? (clickButtonImportCommand = new RelayCommand(ClickImportButton));
+
+        public ICommand _clickSearchCommand;
+        public ICommand SearchCommand => _clickSearchCommand ?? (_clickSearchCommand = new RelayCommand(SearchMachine));
 
         private ICommand _chartClickCommand;
         public ICommand ChartClickCommand => _chartClickCommand ?? (_chartClickCommand = new RelayCommand(ClickCharttButton));
@@ -113,13 +157,31 @@ namespace Machine_Performance_Management.Performance
         {
             Fullname = fullname;
             //PerFormanceData = new ObservableCollection<DevicePerformance>();
+            DateTime serverTime = (DateTime)performanceModel.GetServerTime();
+            DateFrom = serverTime;
+            DateTo = serverTime;
             LoadFactoryItems();
+            LoadMachineTypeItems();
             LoadData();
+        }
+
+        private void SearchMachine()
+        {
+            var data = performanceModel.LoadPerformanceMachineList(
+                SelectedFactoryItemDataManagement,
+                SelectedMachineTypeItem, DateFrom, DateTo
+            );
+            PerFormanceData = new ObservableCollection<DevicePerformance>(data);
+            DateHeaders = data
+                .SelectMany(d => d.DailyPerformance.Keys)
+                .Distinct()
+                .OrderBy(d => d)
+                .ToList();
         }
 
         public void LoadData()
         {
-            var data = performanceModel.LoadPerformanceMachineList(SelectedFactoryItemDataManagement);
+            var data = performanceModel.LoadPerformanceMachineList(SelectedFactoryItemDataManagement, SelectedMachineTypeItem, DateFrom, DateTo);
             PerFormanceData = new ObservableCollection<DevicePerformance>(data);
 
             PerFormanceData.Clear();
@@ -151,6 +213,21 @@ namespace Machine_Performance_Management.Performance
                 SelectedFactoryItemDataManagement = FactoryitemDataManagement[0];
 
             //SelectedFactoryItemDataManagement = Factoryitem[0];
+
+        }
+
+        public void LoadMachineTypeItems()
+        {
+            MachineTypeDataItem.Clear();
+            var list = performanceModel.GetMachineTypeList(SelectedFactoryItemDataManagement);
+
+            foreach (var item in list)
+            {
+                MachineTypeDataItem.Add(item);
+            }
+            MachineTypeDataItem.Insert(0, "All");
+            if (MachineTypeDataItem.Count > 0)
+                SelectedMachineTypeItem = MachineTypeDataItem[0];
 
         }
 
