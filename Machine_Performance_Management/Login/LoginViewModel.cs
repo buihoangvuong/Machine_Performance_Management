@@ -2,8 +2,6 @@
 using CommunityToolkit.Mvvm.Input;
 using Machine_Performance_Management.Extension;
 using Machine_Performance_Management.Main;
-
-using Machine_Performance_Management.Main;
 using System;
 using System.Threading.Tasks;
 using System.Windows;

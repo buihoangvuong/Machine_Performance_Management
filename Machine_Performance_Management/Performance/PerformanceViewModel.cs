@@ -8,6 +8,7 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -57,7 +58,7 @@ namespace Machine_Performance_Management.Performance
                 OnPropertyChanged(nameof(FactoryitemDataManagement));
             }
         }
-        public ObservableCollection<DevicePerformance1> _dataManagement { get; set; } = new ObservableCollection<DevicePerformance1>();        
+        public ObservableCollection<DevicePerformance1> _dataManagement { get; set; } = new ObservableCollection<DevicePerformance1>();
 
         private string _selectedFactoryItemDataManagement;
         public string SelectedFactoryItemDataManagement
@@ -137,8 +138,29 @@ namespace Machine_Performance_Management.Performance
                 OnPropertyChanged(nameof(DateHeaders));
             }
         }
-        
-        
+
+        private bool? _isAllSelected = false;
+        public bool? IsAllSelected
+        {
+            get => _isAllSelected;
+            set
+            {
+                if (_isAllSelected != value)
+                {
+                    _isAllSelected = value;
+                    OnPropertyChanged(nameof(IsAllSelected));
+
+                    if (_isAllSelected.HasValue && PerFormanceData != null)
+                    {
+                        foreach (var item in PerFormanceData)
+                            item.IsSelected = _isAllSelected.Value;
+                    }
+                }
+            }
+        }
+
+
+
         public event Action ImportCompleted;
         #endregion
 
@@ -156,7 +178,6 @@ namespace Machine_Performance_Management.Performance
         public PerformanceViewModel(string fullname)
         {
             Fullname = fullname;
-            //PerFormanceData = new ObservableCollection<DevicePerformance>();
             DateTime serverTime = (DateTime)performanceModel.GetServerTime();
             DateFrom = serverTime;
             DateTo = serverTime;
@@ -172,6 +193,7 @@ namespace Machine_Performance_Management.Performance
                 SelectedMachineTypeItem, DateFrom, DateTo
             );
             PerFormanceData = new ObservableCollection<DevicePerformance>(data);
+            WireRowSelection();
             DateHeaders = data
                 .SelectMany(d => d.DailyPerformance.Keys)
                 .Distinct()
@@ -181,22 +203,65 @@ namespace Machine_Performance_Management.Performance
 
         public void LoadData()
         {
-            var data = performanceModel.LoadPerformanceMachineList(SelectedFactoryItemDataManagement, SelectedMachineTypeItem, DateFrom, DateTo);
-            PerFormanceData = new ObservableCollection<DevicePerformance>(data);
+            DateTime DateFrom = DateTime.Now;
+            DateTime DateTo = DateTime.Now;
+            var data = performanceModel.LoadPerformanceMachineList(
+                SelectedFactoryItemDataManagement, SelectedMachineTypeItem, DateFrom, DateTo);
 
-            PerFormanceData.Clear();
-            foreach (var item in data)
+            PerFormanceData = new ObservableCollection<DevicePerformance>(data);
+            WireRowSelection();
+            foreach (var item in PerFormanceData)
             {
-                PerFormanceData.Add(item);
+                item.PropertyChanged += (s, e) =>
+                {
+                    if (e.PropertyName == nameof(DevicePerformance.IsSelected))
+                    {
+                        UpdateIsAllSelected();
+                    }
+                };
             }
-            DateHeaders = data
-            .SelectMany(d => d.DailyPerformance.Keys)
-            .Distinct()
-            .OrderBy(d => d)
-            .ToList();
-            ImportCompleted?.Invoke();
-            // Hiển thị thông tin của máy đầu tiên trong danh sách
+
+            UpdateIsAllSelected();
         }
+        private void WireRowSelection()
+        {
+            if (PerFormanceData == null) return;
+
+            foreach (var item in PerFormanceData)
+            {
+                item.PropertyChanged -= Item_PropertyChanged;
+                item.PropertyChanged += Item_PropertyChanged;
+            }
+
+            UpdateIsAllSelected();
+        }
+
+        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(DevicePerformance.IsSelected))
+            {
+                UpdateIsAllSelected();
+            }
+        }
+
+        private void UpdateIsAllSelected()
+        {
+            if (PerFormanceData == null || PerFormanceData.Count == 0)
+            {
+                IsAllSelected = false;
+                return;
+            }
+
+            int selectedCount = PerFormanceData.Count(x => x.IsSelected);
+
+            if (selectedCount == 0)
+                IsAllSelected = false;
+            else if (selectedCount == PerFormanceData.Count)
+                IsAllSelected = true;
+            else
+                IsAllSelected = null; // indeterminate → giống Excel
+        }
+
 
         public void LoadFactoryItems()
         {
@@ -285,16 +350,47 @@ namespace Machine_Performance_Management.Performance
 
         public void ClickCharttButton()
         {
-            if (PerFormanceData != null && PerFormanceData.Any())
-            {
-                var detail = new ChartView(PerFormanceData.ToList()); // Chuyển đổi sang List<DevicePerformance>
-                detail.ShowDialog();
-            }
-            else
+            if (PerFormanceData == null || !PerFormanceData.Any(x => x.IsSelected))
             {
                 MessageBox.Show("Không có dữ liệu cho biểu đồ!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
             }
+
+            // Lấy các dòng được chọn
+            var selectedRows = PerFormanceData.Where(x => x.IsSelected).ToList();
+
+            // Tìm ngày cuối cùng
+            string lastDate = null;
+            foreach (var row in selectedRows)
+            {
+                if (row.DailyPerformance != null && row.DailyPerformance.Any())
+                {
+                    var rowLast = row.DailyPerformance.Keys.Max(); // ngày cuối cùng theo thứ tự key
+                    if (lastDate == null || string.Compare(rowLast, lastDate) > 0)
+                        lastDate = rowLast;
+                }
+            }
+
+            if (lastDate == null)
+            {
+                MessageBox.Show("Không có dữ liệu cho ngày cuối cùng!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var chartData = selectedRows.Select(r => new DevicePerformance
+            {
+                Machine_Name = r.Machine_Name,
+                DailyPerformance = new Dictionary<string, double>
+                {
+                    { lastDate, r.DailyPerformance.ContainsKey(lastDate) ? r.DailyPerformance[lastDate] : 0 }
+                }
+            }).ToList();
+
+            var detail = new ChartView(chartData);
+            detail.ShowDialog();
+
         }
+
 
     }
 }

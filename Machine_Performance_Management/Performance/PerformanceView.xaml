@@ -12,7 +12,7 @@
              
              Background="#1F1C2C"
              mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="800">
+             d:DesignHeight="700" d:DesignWidth="1200">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
@@ -130,18 +130,19 @@
                     <!-- Search Button -->
                     <Button Grid.Column="4"
                 Content="🔍 Search"
-                Margin="100 0 0 0"
+                Margin="20 0 0 0"
                 Command="{Binding SearchCommand}"
                 Style="{StaticResource ButtonStyleSmall}"/>
                 </Grid>
 
                 <!-- Import Button -->
-                <Button Grid.Column="3"
-        Command="{Binding ImportCommand}"
-        Style="{StaticResource ButtonStyleSmall}">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Button Grid.Column="3" Width="80"
+                Command="{Binding ImportCommand}"
+                Style="{StaticResource ButtonStyleSmall}">
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="📥" FontSize="16" Margin="0 0 5 0"/>
-                        <TextBlock Text="Import Data" FontWeight="Bold"/>
+                        <TextBlock Text="Import" FontWeight="Bold"/>
                     </StackPanel>
                 </Button>
 
@@ -150,15 +151,15 @@
 
         <Border BorderThickness="1" Grid.Row="1">
             <DataGrid  x:Name="MyDataGrid" Margin="10" Background="{DynamicResource BackgroundBrush}"
-                  Style="{StaticResource ModernDataGrid}"
-                  ItemsSource="{Binding PerFormanceData}"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  ScrollViewer.VerticalScrollBarVisibility="Auto"
-                  IsReadOnly="True"
-                       SelectionUnit="Cell"
-                   MouseLeftButtonUp="DataGrid_MouseDoubleClick">
+           Style="{StaticResource ModernDataGrid}"
+           ItemsSource="{Binding PerFormanceData}"
+           AutoGenerateColumns="False"
+           CanUserAddRows="False"
+           ScrollViewer.HorizontalScrollBarVisibility="Auto"
+           ScrollViewer.VerticalScrollBarVisibility="Auto"
+           IsReadOnly="True"
+                SelectionUnit="Cell"
+            MouseLeftButtonUp="DataGrid_MouseDoubleClick">
 
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
@@ -180,20 +181,19 @@
 
                 <DataGrid.Columns>
 
-                    <!-- CheckBox column -->
                     <DataGridTemplateColumn Width="40">
                         <DataGridTemplateColumn.Header>
-                            <!-- Check all -->
-                            <CheckBox x:Name="SelectAllCheckBox"
-                          Click="SelectAllCheckBox_Click"/>
+                            <CheckBox IsThreeState="True"
+           IsChecked="{Binding IsAllSelected, Mode=TwoWay}" />
                         </DataGridTemplateColumn.Header>
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    
+
+
                     <DataGridTextColumn Header="NO" Binding="{Binding NO}" Width="40"/>
                     <DataGridTextColumn Header="Factory" Binding="{Binding Factory}" Width="75"/>
                     <DataGridTextColumn Header="Machine Type" Binding="{Binding Item}" Width="95"/>

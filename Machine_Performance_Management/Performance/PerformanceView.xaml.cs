@@ -14,16 +14,16 @@ using System.Windows.Controls.Primitives;
 
 namespace Machine_Performance_Management.Performance
 {
-	/// <summary>
-	/// Interaction logic for PerformanceView.xaml
-	/// </summary>
-	public partial class PerformanceView : UserControl
-	{
-		protected readonly PerformanceViewModel viewModel;
+    /// <summary>
+    /// Interaction logic for PerformanceView.xaml
+    /// </summary>
+    public partial class PerformanceView : UserControl
+    {
+        protected readonly PerformanceViewModel viewModel;
 
         public PerformanceView(string fullname)
-		{
-			InitializeComponent();
+        {
+            InitializeComponent();
             viewModel = new PerformanceViewModel(fullname);
             DataContext = viewModel;
             viewModel.ImportCompleted += OnImportCompleted;
@@ -53,7 +53,7 @@ namespace Machine_Performance_Management.Performance
             centerTextStyle.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
 
 
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "NO", Binding = new Binding("NO"), Width = 40, ElementStyle = centerTextStyle});
+            dataGrid.Columns.Add(new DataGridTextColumn { Header = "NO", Binding = new Binding("NO"), Width = 40, ElementStyle = centerTextStyle });
             dataGrid.Columns.Add(new DataGridTextColumn { Header = "Factory", Binding = new Binding("Factory"), Width = 70, ElementStyle = centerTextStyle });
             dataGrid.Columns.Add(new DataGridTextColumn { Header = "Machine Type", Binding = new Binding("Item"), Width = 95, ElementStyle = centerTextStyle });
             dataGrid.Columns.Add(new DataGridTextColumn { Header = "Machine Name", Binding = new Binding("Machine_Name"), Width = 110, ElementStyle = centerTextStyle });
@@ -63,9 +63,9 @@ namespace Machine_Performance_Management.Performance
                 var col = new DataGridTextColumn
                 {
                     Header = date,
-                    Binding = new Binding($"DailyPerformance[{date}]") 
-                    { 
-                        StringFormat = "{0:0.##}%" 
+                    Binding = new Binding($"DailyPerformance[{date}]")
+                    {
+                        StringFormat = "{0:0.##}%"
                     },
                     Width = 60,
                     ElementStyle = centerTextStyle
@@ -86,8 +86,8 @@ namespace Machine_Performance_Management.Performance
                 dataGrid.Columns.Add(col);
             }
 
-            dataGrid.Columns.Add(new DataGridTextColumn 
-            { 
+            dataGrid.Columns.Add(new DataGridTextColumn
+            {
                 Header = "Average",
                 Binding = new Binding("AveragePerformance")
                 {
@@ -161,11 +161,11 @@ namespace Machine_Performance_Management.Performance
 
         private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-			var grid = sender as DataGrid;
-			if (grid == null) return;
+            var grid = sender as DataGrid;
+            if (grid == null) return;
 
-			// tìm row + cell
-			var dep = (DependencyObject)e.OriginalSource;
+            // tìm row + cell
+            var dep = (DependencyObject)e.OriginalSource;
             DataGridRow row = null;
             DataGridCell cell = null;
 
@@ -270,29 +270,29 @@ namespace Machine_Performance_Management.Performance
             };
         }
 
-        private void SelectAllCheckBox_Click(object sender, RoutedEventArgs e)
-        {
-            if (viewModel?.PerFormanceData == null) return;
+        //private void SelectAllCheckBox_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (viewModel?.PerFormanceData == null) return;
 
-            // Lấy trạng thái của checkbox header
-            var isChecked = _selectAllCheckBox.IsChecked;
+        //    // Lấy trạng thái của checkbox header
+        //    var isChecked = _selectAllCheckBox.IsChecked;
 
-            if (isChecked == true)
-            {
-                // Chọn tất cả
-                foreach (var item in viewModel.PerFormanceData)
-                    item.IsSelected = true;
-            }
-            else if (isChecked == false)
-            {
-                // Bỏ chọn tất cả
-                foreach (var item in viewModel.PerFormanceData)
-                    item.IsSelected = false;
-            }
+        //    if (isChecked == true)
+        //    {
+        //        // Chọn tất cả
+        //        foreach (var item in viewModel.PerFormanceData)
+        //            item.IsSelected = true;
+        //    }
+        //    else if (isChecked == false)
+        //    {
+        //        // Bỏ chọn tất cả
+        //        foreach (var item in viewModel.PerFormanceData)
+        //            item.IsSelected = false;
+        //    }
 
-            // Sau khi đổi -> cập nhật lại trạng thái header (đảm bảo đồng bộ)
-            UpdateSelectAllState();
-        }
+        //    // Sau khi đổi -> cập nhật lại trạng thái header (đảm bảo đồng bộ)
+        //    UpdateSelectAllState();
+        //}
 
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -332,5 +332,27 @@ namespace Machine_Performance_Management.Performance
             else
                 _selectAllCheckBox.IsChecked = null; // indeterminate
         }
+
+
+        private void SelectAllCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            if (viewModel?.PerFormanceData == null) return;
+
+            bool newValue = _selectAllCheckBox.IsChecked == true;
+
+            foreach (var item in viewModel.PerFormanceData)
+            {
+                item.IsSelected = newValue;
+            }
+
+            UpdateSelectAllState();
+        }
+
+
+
+
+
+
+
     }
 }
