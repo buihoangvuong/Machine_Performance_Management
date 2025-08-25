@@ -230,61 +230,7 @@ namespace Machine_Performance_Management.Performance
             });
         }
 
-        private void AddDynamicDateColumns(DataGrid dataGrid, List<string> dates)
-        {
-            if (dates == null || dates.Count == 0) return;
-
-            dataGrid.Columns.Clear();
-
-            // cột chọn dòng (checkbox) ở vị trí đầu
-            dataGrid.Columns.Add(BuildSelectColumn());
-
-            var centerTextStyle = new Style(typeof(TextBlock));
-            centerTextStyle.Setters.Add(new Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center));
-            centerTextStyle.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
-
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "NO", Binding = new Binding("NO"), Width = 40, ElementStyle = centerTextStyle });
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Factory", Binding = new Binding("Factory"), Width = 70, ElementStyle = centerTextStyle });
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Machine Type", Binding = new Binding("Item"), Width = 95, ElementStyle = centerTextStyle });
-            dataGrid.Columns.Add(new DataGridTextColumn { Header = "Machine Name", Binding = new Binding("Machine_Name"), Width = 110, ElementStyle = centerTextStyle });
-
-            dataGrid.Columns.Add(new DataGridTextColumn
-            {
-                Header = "Average",
-                Binding = new Binding("AveragePerformance") { StringFormat = "{0:0.##}%" },
-                Width = 70,
-                ElementStyle = centerTextStyle
-            });
-
-            foreach (var date in dates)
-            {
-                var col = new DataGridTextColumn
-                {
-                    Header = date,
-                    Binding = new Binding($"DailyPerformance[{date}]") { StringFormat = "{0:0.##}%" },
-                    Width = 60,
-                    ElementStyle = centerTextStyle
-                };
-
-                if (date == dates.Last())
-                {
-                    col.CellStyle = new Style(typeof(DataGridCell))
-                    {
-                        Setters =
-                {
-                    new Setter(DataGridCell.BackgroundProperty, Brushes.LightYellow),
-                    new Setter(DataGridCell.FontWeightProperty, FontWeights.Bold),
-                    new Setter(DataGridCell.ForegroundProperty, Brushes.DarkRed)
-                }
-                    };
-                }
-
-                dataGrid.Columns.Add(col);
-            }
-
-            // sau khi build cột xong, theo dõi thay đổi để cập nhật trạng thái "Select All"
-            WireSelectionMonitoring();
-        }
+      
 
         private void OnImportCompleted()
         {
