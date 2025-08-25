@@ -148,9 +148,6 @@
             </Grid>
         </Grid>
 
-        <!--<Border BorderThickness="1" BorderBrush="#DDDDDD" CornerRadius="8" Padding="15" Margin="10" Background="#FAFAFA">
-        </Border>-->
-
         <Border BorderThickness="1" Grid.Row="1">
             <DataGrid  x:Name="MyDataGrid" Margin="10" Background="{DynamicResource BackgroundBrush}"
                   Style="{StaticResource ModernDataGrid}"
@@ -180,16 +177,28 @@
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
 
+
                 <DataGrid.Columns>
+
+                    <!-- CheckBox column -->
+                    <DataGridTemplateColumn Width="40">
+                        <DataGridTemplateColumn.Header>
+                            <!-- Check all -->
+                            <CheckBox x:Name="SelectAllCheckBox"
+                          Click="SelectAllCheckBox_Click"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    
                     <DataGridTextColumn Header="NO" Binding="{Binding NO}" Width="40"/>
                     <DataGridTextColumn Header="Factory" Binding="{Binding Factory}" Width="75"/>
                     <DataGridTextColumn Header="Machine Type" Binding="{Binding Item}" Width="95"/>
                     <DataGridTextColumn Header="Machine Name" Binding="{Binding Machine_Name}" Width="115"/>
-
-                    <!-- Cột ngày sẽ thêm động ở code-behind -->
-
-                    <DataGridTextColumn Header="Average" Binding="{Binding AveragePerformance, StringFormat={}{0:F2}}" 
-                                    Width="70"/>
+                    <DataGridTextColumn Header="Average" Binding="{Binding AveragePerformance, StringFormat={}{0:F2}}" Width="70"/>
                 </DataGrid.Columns>
             </DataGrid>
 

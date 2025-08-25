@@ -207,19 +207,10 @@ namespace Machine_Performance_Management.Performance
                                     continue;
 
                                 string dateKey = parsedDate.Value.ToString("MM.dd");
-
-                                // Kiểm tra ngày trùng lặp
-                                if (datesInSheet.Contains(dateKey))
-                                {
-                                    MessageBox.Show($"Ngày trùng lặp: {dateKey} trong sheet '{worksheet.Name}'.",
-                                                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
-                                    return false;
-                                }
-
                                 datesInSheet.Add(dateKey);
+
                                 perf.Date[dateKey] = parsedDate.Value.Day;
 
-                                // Lấy giá trị hiệu suất từ sheet
                                 if (double.TryParse(worksheet.Cells[row, col + 1].Text.Replace(",", "").Trim(),
                                                     NumberStyles.Any, CultureInfo.InvariantCulture, out var STtValue))
                                 {
@@ -264,17 +255,35 @@ namespace Machine_Performance_Management.Performance
 
                                 DateTime lastDate = sortedDates.Last();
                                 HashSet<string> dateSet = new HashSet<string>();
+                                List<string> duplicateDates = new List<string>();
 
                                 for (var date = sortedDates.First(); date <= lastDate; date = date.AddDays(1))
                                 {
                                     string dateString = date.ToString("MM.dd");
 
-                                    if (!datesInSheet.Contains(dateString))
+                                    if (!datesInSheet.Contains(date.ToString("MM.dd")))
                                     {
                                         MessageBox.Show($"Ngày {date:dd.MM.yyyy} bị thiếu trong sheet '{worksheet.Name}'.",
                                                         "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                                         return false;
                                     }
+                                    // Kiểm tra ngày trùng lặp
+                                    if (dateSet.Contains(dateString))
+                                    {
+                                        duplicateDates.Add(dateString);
+                                    }
+                                    else
+                                    {
+                                        dateSet.Add(dateString);
+                                    }
+                                }
+
+                                // Thông báo về ngày trùng lặp nếu có
+                                if (duplicateDates.Count > 0)
+                                {
+                                    string message = "Có ngày trùng lặp: " + string.Join(", ", duplicateDates);
+                                    MessageBox.Show(message, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                                    return false;
                                 }
                             }
 
@@ -308,6 +317,7 @@ namespace Machine_Performance_Management.Performance
 
             return true; // thành công
         }
+
         public void InsertToDatabase(List<DevicePerformance> dataList, string fullname)
         {
             using (DbService db = new DbService(config))
@@ -324,13 +334,13 @@ namespace Machine_Performance_Management.Performance
                         var firstDateString = dates.First();
                         var lastDateString = dates.Last();
 
-                        DateTime firstDate = DateTime.ParseExact(firstDateString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
-                        DateTime lastDate = DateTime.ParseExact(lastDateString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                        DateTime firstDate = DateTime.ParseExact(firstDateString, "MM.dd", CultureInfo.InvariantCulture);
+                        DateTime lastDate = DateTime.ParseExact(lastDateString, "MM.dd", CultureInfo.InvariantCulture);
 
                         for (var date = firstDate; date <= lastDate; date = date.AddDays(1))
                         {
-                            var formattedDate = date.ToString("dd.MM.yyyy");
-                            var dateKey = date.ToString("dd.MM.yyyy");
+                            var formattedDate = date.ToString("MM.dd");
+                            var dateKey = date.ToString("MM.dd");
 
                             var queryInsert = @"
                                 INSERT INTO machine_performance 

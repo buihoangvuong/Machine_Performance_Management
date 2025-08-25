@@ -101,6 +101,7 @@ namespace Machine_Performance_Management.Performance
         public event Action ImportCompleted;
         #endregion
 
+
         private ICommand clickButtonImportCommand;
         public ICommand ImportCommand => clickButtonImportCommand ?? (clickButtonImportCommand = new RelayCommand(ClickImportButton));
 
