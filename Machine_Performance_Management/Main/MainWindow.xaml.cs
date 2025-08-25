@@ -2,6 +2,8 @@
 using Machine_Performance_Management.Main;
 using OfficeOpenXml;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Machine_Performance_Management.Main
 {
@@ -25,7 +27,14 @@ namespace Machine_Performance_Management.Main
             DataContext = mainWindowViewModel;
         }
 
-		private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        private void Expander_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is Expander expander)
+            {
+                expander.IsExpanded = !expander.IsExpanded;
+            }
+        }
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
 		{
             LoginView loginWindow = new LoginView(); // Tạo LoginView mới
             loginWindow.Show(); // Hiển thị LoginView

@@ -5,23 +5,20 @@
              StartupUri="Login/LoginView.xaml">
     <Application.Resources>
 
-        <LinearGradientBrush x:Key="ButtonBrush" StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#00B4DB" Offset="0"/>
-            <GradientStop Color="#0083B0" Offset="1"/>
-        </LinearGradientBrush>
+
         
         <Style x:Key="ButtonStyleSmall" TargetType="Button">
-            <Setter Property="Background" Value="{StaticResource ButtonBrush}"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="#ffd54f"/>
+            <Setter Property="Foreground" Value="Black"/>
             <Setter Property="BorderBrush" Value="Black"/>
             <Setter Property="Padding" Value="5"/>
             <Setter Property="Margin" Value="2,2,2,2"/>
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="MinWidth" Value="100"/>
-            <Setter Property="MinHeight" Value="30"/>
+            <Setter Property="MinHeight" Value="35"/>
             <Setter Property="FontFamily" Value="Segoe UI"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -74,8 +71,165 @@
         </LinearGradientBrush>
 
 
-        
 
+        <!-- Style cho ComboBox -->
+        <Style x:Key="CustomComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#949ba8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="#1e1e2f"/>
+            <Setter Property="Foreground" Value="White"/>
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <!-- Border bao quanh ComboBox -->
+                            <Border x:Name="Border"
+                                CornerRadius="6"
+                                Background="{TemplateBinding Background}"  
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="25"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Content hiển thị item đã chọn -->
+                                    <ContentPresenter x:Name="ContentSite"
+                                                Grid.Column="0"
+                                                Margin="8,4,4,4"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Center"
+                                                Content="{TemplateBinding SelectionBoxItem}"
+                                                ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                                IsHitTestVisible="False"/>
+
+                                    <!-- ToggleButton để mở/đóng dropdown -->
+                                    <ToggleButton x:Name="ToggleButton"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2"
+                                            Focusable="false"
+                                            IsChecked="{Binding Path=IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                            ClickMode="Press">
+                                        <ToggleButton.Template>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Grid Background="Transparent">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="25"/>
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <!-- Mũi tên dropdown -->
+                                                    <Path x:Name="Arrow"
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Data="M 0 0 L 4 4 L 8 0 Z"
+                                                    Fill="White"/>
+                                                </Grid>
+                                            </ControlTemplate>
+                                        </ToggleButton.Template>
+                                    </ToggleButton>
+
+                                    <!-- TextBox khi ComboBox có thể edit -->
+                                    <TextBox x:Name="PART_EditableTextBox"
+                                       Grid.Column="0"
+                                       Margin="8,4,4,4"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       Focusable="True"
+                                       Background="Transparent"
+                                       Foreground="White"
+                                       BorderThickness="0"
+                                       Visibility="Hidden"
+                                       IsReadOnly="{TemplateBinding IsReadOnly}"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Popup chứa danh sách items -->
+                            <Popup x:Name="Popup"
+                               Placement="Bottom"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               PopupAnimation="Slide">
+                                <Grid x:Name="DropDown"
+                                  SnapsToDevicePixels="True"
+                                  MinWidth="{TemplateBinding ActualWidth}"
+                                  MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder"
+                                        Background="#1e1e2f"
+                                        BorderBrush="#949ba8"
+                                        BorderThickness="1"
+                                        CornerRadius="6">
+                                        <ScrollViewer Margin="4" SnapsToDevicePixels="True">
+                                            <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+
+                        <ControlTemplate.Triggers>
+                            <!-- Khi có focus -->
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#007ACC"/>
+                            </Trigger>
+
+                            <!-- Khi hover -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="#007ACC"/>
+                            </Trigger>
+
+                            <!-- Khi IsEditable = true -->
+                            <Trigger Property="IsEditable" Value="true">
+                                <Setter Property="IsTabStop" Value="false"/>
+                                <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible"/>
+                                <Setter TargetName="ContentSite" Property="Visibility" Value="Hidden"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <!-- Style cho các items -->
+            <Setter Property="ItemContainerStyle">
+                <Setter.Value>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Padding" Value="8,4"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ComboBoxItem">
+                                    <Border x:Name="Border"
+                                        Background="{TemplateBinding Background}"
+                                        Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <!-- Hover -->
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#949ba8"/>
+                                        </Trigger>
+                                        <!-- Selected -->
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="Border" Property="Background" Value="#007ACC"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
     </Application.Resources>
 </Application>

@@ -13,11 +13,11 @@
              Background="#1F1C2C"
              mc:Ignorable="d" 
              d:DesignHeight="700" d:DesignWidth="800">
-    <Grid>
+    <Grid Margin="0 30 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
             <RowDefinition Height="55*" />
-            <RowDefinition Height="7*" />
+            <RowDefinition Height="5*" />
         </Grid.RowDefinitions>
 
         <Grid Grid.Row="0">
@@ -47,164 +47,84 @@
             </StackPanel>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1.5*"/>
-                    <!-- Factory -->
-                    <ColumnDefinition Width="2*"/>
-                    <!-- Machine Type -->
-                    <ColumnDefinition Width="5*"/>
-                    <!-- Date Filter -->
-                    <ColumnDefinition Width="1*"/>
-                    <!-- Buttons -->
+                    <!-- Cột Factory - giảm xuống -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Cột Machine Type - cố định -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Cột Date Filter - tăng lên để chứa 2 DatePicker + label -->
+                    <ColumnDefinition Width="Auto" MinWidth="400"/>
+                    <!-- Cột Buttons - cố định -->
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- Factory -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0 0 20 0">
                     <TextBlock Text="Factory:"
-               FontWeight="Bold"
-               Foreground="#D3D3D3"
-               VerticalAlignment="Center"
-               Width="60"
-               FontSize="14"/>
+                       FontWeight="Bold"
+                       Foreground="#D3D3D3"
+                       VerticalAlignment="Center"
+                       Width="60"
+                       FontSize="14"/>
 
-                    <ComboBox Height="30" Width="120"
+                    <ComboBox Style="{StaticResource CustomComboBoxStyle}"
+                      Width="90"
                       ItemsSource="{Binding FactoryitemDataManagement}"
-                      SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}"
-                      Margin="5 0 0 0"
-                      FontSize="14"
-                      BorderBrush="#949ba8"
-                      BorderThickness="1"
-                      Background="#1e1e2f"
-                      >
-
-                        <ComboBox.Template>
-                            <ControlTemplate TargetType="ComboBox">
-                                <Grid>
-                                    <!-- Border bao quanh ComboBox -->
-                                    <Border x:Name="Border"
-                                    CornerRadius="6"
-                                    Background="{TemplateBinding Background}"  
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}">
-                                    <ContentPresenter Margin="4"
-                                      HorizontalAlignment="Left"
-                                      VerticalAlignment="Center"
-                                      RecognizesAccessKey="True"/>
-                                    </Border>
-
-                                   
-                                </Grid>
-                            </ControlTemplate>
-                        </ComboBox.Template>
-
-                        <ComboBox.ItemContainerStyle>
-                            <Style TargetType="ComboBoxItem">
-                                <Setter Property="Foreground" Value="White"/>
-                                <Setter Property="Padding" Value="8,4"/>
-                                <Setter Property="Background" Value="#1e1e2f"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ComboBoxItem">
-                                            <Border x:Name="Border"
-                            Background="{TemplateBinding Background}"
-                            Padding="{TemplateBinding Padding}">
-                                                <ContentPresenter />
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <!-- Hover -->
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter TargetName="Border" Property="Background" Value="#949ba8"/>
-                                                </Trigger>
-                                                <!-- Selected -->
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter TargetName="Border" Property="Background" Value="#949ba8"/>
-                                                    <Setter Property="Foreground" Value="White"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </ComboBox.ItemContainerStyle>
-                        
-                    </ComboBox>
-
-
-
-
-
+                      SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}"/>
                 </StackPanel>
 
                 <!-- Machine Type -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0 0 20 0">
                     <TextBlock Text="Machine Type:"
-               FontWeight="Bold" Foreground="#D3D3D3"
-               VerticalAlignment="Center"
-               Width="100"
-               FontSize="14"/>
+                       FontWeight="Bold" Foreground="#D3D3D3"
+                       VerticalAlignment="Center"
+                       Width="100"
+                       FontSize="14"/>
                     <ComboBox Height="30" Width="140"
-              ItemsSource="{Binding MachineTypeDataItem}"
-              SelectedItem="{Binding SelectedMachineTypeItem, Mode=TwoWay}"
-              Margin="5 0 0 0"
-              FontSize="14"/>
+                      Style="{StaticResource CustomComboBoxStyle}"
+                      ItemsSource="{Binding MachineTypeDataItem}"
+                      SelectedItem="{Binding SelectedMachineTypeItem, Mode=TwoWay}"
+                      Margin="5 0 0 0"
+                      FontSize="14"/>   
                 </StackPanel>
 
                 <!-- Date Filter -->
-                <Grid Grid.Column="2" Margin="5">
+                <Grid Grid.Column="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="160"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="160"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Label -->
-                    <Label Grid.Column="0"
-           Content="*Date:"
-           VerticalAlignment="Center"
-           FontSize="14"
-           FontWeight="Bold" Foreground="#D3D3D3"
-           Margin="0 0 5 0"/>
-
-                    <!-- DatePicker From -->
-                    <DatePicker Grid.Column="1"
-                SelectedDate="{Binding DateFrom}"
-                Height="30" Width="150"
-                FontSize="14"
-                VerticalContentAlignment="Center"
-                Margin="0 0 10 0"/>
-
-                    <!-- Separator -->
-                    <Label Grid.Column="2"
-           Content="~"
-           VerticalAlignment="Center"
-           FontSize="16"
-           FontWeight="Bold" Foreground="#D3D3D3"
-           Margin="5 0"/>
-
-                    <!-- DatePicker To -->
-                    <DatePicker Grid.Column="3"
-                SelectedDate="{Binding DateTo}"
-                Height="30" Width="150"
-                FontSize="14"
-                VerticalContentAlignment="Center"
-                Margin="10 0 0 0"/>
+                    <Border Grid.Column="0" 
+                    BorderBrush="#D1D5DB" BorderThickness="1"
+                    CornerRadius="6"
+                    Padding="5"
+                    Background="#1e1e2f"
+                    VerticalAlignment="Center"
+                    Margin="0,0,40,0"
+                    >
+                        <StackPanel Orientation="Horizontal">
+                            <DatePicker Name="StartDatePicker" Width="150" 
+                                SelectedDate="{Binding DateFrom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="đến" VerticalAlignment="Center" Margin="5,0" Foreground="White" />
+                            <DatePicker Background="Transparent"  Name="EndDatePicker" Width="130" 
+                                SelectedDate="{Binding DateTo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </Border>
 
                     <!-- Search Button -->
-                    <Button Grid.Column="4"
-                Content="🔍 Search"
-                Margin="100 0 0 0"
-                Command="{Binding SearchCommand}"
-                Style="{StaticResource ButtonStyleSmall}"/>
+                    <Button Grid.Column="1"
+                    Content="Search"
+                    Margin="0 0 20 0"
+                    Command="{Binding SearchCommand}"
+                    Style="{StaticResource ButtonStyleSmall}"/>
                 </Grid>
 
                 <!-- Import Button -->
                 <Button Grid.Column="3"
-        Command="{Binding ImportCommand}"
-        Style="{StaticResource ButtonStyleSmall}">
+                    Command="{Binding ImportCommand}"
+                    Style="{StaticResource ButtonStyleSmall}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="📥" FontSize="16" Margin="0 0 5 0"/>
-                        <TextBlock Text="Import Data" FontWeight="Bold"/>
+                        <TextBlock Text="Import Data" VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
 
@@ -214,23 +134,23 @@
         <!--<Border BorderThickness="1" BorderBrush="#DDDDDD" CornerRadius="8" Padding="15" Margin="10" Background="#FAFAFA">
         </Border>-->
 
-        <Border BorderThickness="1" Grid.Row="1" CornerRadius="10" BorderBrush="#404040" ClipToBounds="True">
+        <Border BorderThickness="1" Grid.Row="1" CornerRadius="10" BorderBrush="#404040" Margin="0 0 10 0" ClipToBounds="True">
             <DataGrid x:Name="MyDataGrid" 
-       Margin="5"
-       Background="Transparent"
-       ItemsSource="{Binding PerFormanceData}"
-       AutoGenerateColumns="False"
-       CanUserAddRows="False"
-       ScrollViewer.HorizontalScrollBarVisibility="Auto"
-       ScrollViewer.VerticalScrollBarVisibility="Auto"
-       IsReadOnly="True"
-       SelectionUnit="Cell"
-       MouseLeftButtonUp="DataGrid_MouseDoubleClick"
-       GridLinesVisibility="None"
-       HeadersVisibility="Column"
-       RowBackground="#1e1e2f"
-       BorderThickness="0"
-       AlternatingRowBackground="#21213a">
+               Margin="5"
+               Background="Transparent"
+               ItemsSource="{Binding PerFormanceData}"
+               AutoGenerateColumns="False"
+               CanUserAddRows="False"
+               ScrollViewer.HorizontalScrollBarVisibility="Auto"
+               ScrollViewer.VerticalScrollBarVisibility="Auto"
+               IsReadOnly="True"
+               SelectionUnit="Cell"
+               MouseLeftButtonUp="DataGrid_MouseDoubleClick"
+               GridLinesVisibility="None"
+               HeadersVisibility="Column"
+               RowBackground="#1e1e2f"
+               BorderThickness="0"
+               AlternatingRowBackground="#21213a">
 
                 <DataGrid.Resources>
                     <!-- Style cho DataGridCell -->
@@ -301,55 +221,116 @@
        AllowsTransparency="True"
        PopupAnimation="Fade">
             <Border Background="#1B1C2A"
-            CornerRadius="12"
-            Padding="15"
-            BorderThickness="1"
-            BorderBrush="#333"
-            Height="195" Width="405">
+        CornerRadius="12"
+        Padding="12"
+        BorderThickness="1"
+        BorderBrush="#333"
+        Height="180" >
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="250"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Donut Chart -->
-                    <Grid Grid.Column="0" Width="150" Height="150">
-                        <lvc:PieChart x:Name="MyPieChart"
+                    <!-- Donut Chart Section -->
+                    <Grid Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Grid Width="130" Height="130">
+                            <lvc:PieChart x:Name="MyPieChart"
                               HoverPushOut="0"
-                              InnerRadius="50"
+                              InnerRadius="45"
                               LegendLocation="None"
                               DataTooltip="{x:Null}"
                               Background="Transparent"
-                              Foreground="Transparent"
-                              >
-                        </lvc:PieChart>
+                              Foreground="Transparent">
+                            </lvc:PieChart>
 
-                        <!-- % ở giữa -->
-                        <TextBlock x:Name="DonutPercent"
+                            <!-- % ở giữa -->
+                            <TextBlock x:Name="DonutPercent"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Foreground="Aqua"
-                           FontSize="16"
+                           Foreground="#00BFFF"
+                           FontSize="18"
                            FontWeight="Bold"/>
+                        </Grid>
                     </Grid>
 
-                    <!-- Info -->
-                    <StackPanel Grid.Column="1" Margin="20,0,0,0" VerticalAlignment="Center">
-                        <TextBlock><Run Text="Model: " Foreground="White"/>
-                    <Run x:Name="PopupModel" Foreground="Aqua"/>
-                        </TextBlock>
-                        <TextBlock><Run Text="S/T: " Foreground="White"/>
-                    <Run x:Name="PopupST" Foreground="Aqua"/>
-                        </TextBlock>
-                        <TextBlock><Run Text="Capa/일: " Foreground="White"/>
-                    <Run x:Name="PopupTarget" Foreground="Aqua"/>
-                        </TextBlock>
-                        <TextBlock><Run Text="생산량: " Foreground="White"/>
-                    <Run x:Name="PopupCompleted" Foreground="Aqua"/>
-                        </TextBlock>
-                        <TextBlock><Run Text="비고: " Foreground="White"/>
-                    <Run x:Name="PopupReason" Foreground="Aqua"/>
-                        </TextBlock>
+                    <!-- Info Section -->
+                    <StackPanel Grid.Column="1" 
+                    Margin="15,10,10,10" 
+                    VerticalAlignment="Center"
+                    >
+
+                        <!-- Model -->
+                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                            <TextBlock Text="Model" 
+                           Foreground="White" 
+                           FontSize="13"
+                           Width="55"
+                           FontWeight="SemiBold"/>
+                            <TextBlock x:Name="PopupModel" 
+                           Foreground="#00BFFF" 
+                           FontSize="13"
+                           FontWeight="Bold"
+                           Margin="10,0,0,0"/>
+                        </StackPanel>
+
+                        <!-- S/T -->
+                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                            <TextBlock Text="S/T" 
+                           Foreground="White" 
+                           FontSize="13"
+                           Width="55"
+                           FontWeight="SemiBold"/>
+                            <TextBlock x:Name="PopupST" 
+                           Foreground="#00BFFF" 
+                           FontSize="13"
+                           FontWeight="Bold"
+                           Margin="10,0,0,0"/>
+                        </StackPanel>
+
+                        <!-- Capa/일 -->
+                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                            <TextBlock Text="Capa/일" 
+                           Foreground="White" 
+                           FontSize="13"
+                           Width="55"
+                           FontWeight="SemiBold"/>
+                            <TextBlock x:Name="PopupTarget" 
+                           Foreground="#00BFFF" 
+                           FontSize="13"
+                           FontWeight="Bold"
+                           Margin="10,0,0,0"/>
+                        </StackPanel>
+
+                        <!-- 생산량 -->
+                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                            <TextBlock Text="생산량" 
+                           Foreground="White" 
+                           FontSize="13"
+                           Width="55"
+                           FontWeight="SemiBold"/>
+                            <TextBlock x:Name="PopupCompleted" 
+                           Foreground="#00BFFF" 
+                           FontSize="13"
+                           FontWeight="Bold"
+                           Margin="10,0,0,0"/>
+                        </StackPanel>
+
+                        <!-- 비고 -->
+                        <StackPanel Orientation="Horizontal" Margin="0,2">
+                            <TextBlock Text="비고" 
+                           Foreground="White" 
+                           FontSize="13"
+                           Width="55"
+                           FontWeight="SemiBold"/>
+                            <TextBlock x:Name="PopupReason" 
+                           Foreground="#00BFFF" 
+                           FontSize="13"
+                           FontWeight="Bold"
+                           Margin="10,0,0,0"
+                           TextWrapping="Wrap"/>
+                        </StackPanel>
+
                     </StackPanel>
                 </Grid>
             </Border>

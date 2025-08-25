@@ -5,6 +5,7 @@ using Machine_Performance_Management.Home;
 using Machine_Performance_Management.Login;
 using Machine_Performance_Management.Performance;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 namespace Machine_Performance_Management.Main
 {
@@ -101,6 +102,8 @@ namespace Machine_Performance_Management.Main
                 ShowUserStaff = true;
             }
         }
+
+
 
         public void MenuHome()
         {
