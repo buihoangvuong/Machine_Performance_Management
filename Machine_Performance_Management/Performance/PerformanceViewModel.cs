@@ -207,17 +207,16 @@ namespace Machine_Performance_Management.Performance
 
         public void ClickCharttButton()
         {
-   //         if (PerFormanceData != null && PerFormanceData.Any())
-   //         {
-   //             var detail = new ChartView(PerFormanceData); // ✅ truyền cả danh sách
-   //             detail.ShowDialog();
-   //         }
-   //         else
-			//{
-   //             MessageBox.Show("Không có dữ liệu cho biểu đồ!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-   //         }                
+            if (PerFormanceData != null && PerFormanceData.Any())
+            {
+                var detail = new ChartView(PerFormanceData.ToList()); // Chuyển đổi sang List<DevicePerformance>
+                detail.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("Không có dữ liệu cho biểu đồ!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
-        private List<DevicePerformance1> data;
     }
 }

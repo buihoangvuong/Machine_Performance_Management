@@ -206,11 +206,20 @@ namespace Machine_Performance_Management.Performance
                                 if (!parsedDate.HasValue)
                                     continue;
 
-                                string dateKey = parsedDate.Value.ToString("dd.MM.yyyy");
-                                datesInSheet.Add(dateKey);
+                                string dateKey = parsedDate.Value.ToString("MM.dd");
 
+                                // Kiểm tra ngày trùng lặp
+                                if (datesInSheet.Contains(dateKey))
+                                {
+                                    MessageBox.Show($"Ngày trùng lặp: {dateKey} trong sheet '{worksheet.Name}'.",
+                                                    "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                                    return false;
+                                }
+
+                                datesInSheet.Add(dateKey);
                                 perf.Date[dateKey] = parsedDate.Value.Day;
 
+                                // Lấy giá trị hiệu suất từ sheet
                                 if (double.TryParse(worksheet.Cells[row, col + 1].Text.Replace(",", "").Trim(),
                                                     NumberStyles.Any, CultureInfo.InvariantCulture, out var STtValue))
                                 {
@@ -242,7 +251,7 @@ namespace Machine_Performance_Management.Performance
                             if (datesInSheet.Count > 0)
                             {
                                 var sortedDates = datesInSheet
-                                    .Select(d => DateTime.ParseExact(d, "dd.MM.yyyy", CultureInfo.InvariantCulture))
+                                    .Select(d => DateTime.ParseExact(d, "MM.dd", CultureInfo.InvariantCulture))
                                     .OrderBy(d => d)
                                     .ToList();
 
@@ -254,9 +263,13 @@ namespace Machine_Performance_Management.Performance
                                 }
 
                                 DateTime lastDate = sortedDates.Last();
+                                HashSet<string> dateSet = new HashSet<string>();
+
                                 for (var date = sortedDates.First(); date <= lastDate; date = date.AddDays(1))
                                 {
-                                    if (!datesInSheet.Contains(date.ToString("dd.MM.yyyy")))
+                                    string dateString = date.ToString("MM.dd");
+
+                                    if (!datesInSheet.Contains(dateString))
                                     {
                                         MessageBox.Show($"Ngày {date:dd.MM.yyyy} bị thiếu trong sheet '{worksheet.Name}'.",
                                                         "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -295,7 +308,6 @@ namespace Machine_Performance_Management.Performance
 
             return true; // thành công
         }
-
         public void InsertToDatabase(List<DevicePerformance> dataList, string fullname)
         {
             using (DbService db = new DbService(config))
