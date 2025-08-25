@@ -186,30 +186,46 @@
                                                AlternatingRowBackground="#21213a"
                                                >
                                     <DataGrid.Resources>
-                                        <!-- Style cho DataGridCell -->
+                                        <!-- Style cho DataGridCell - ĐÂY LÀ QUAN TRỌNG -->
                                         <Style TargetType="DataGridCell">
-                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
                                             <Setter Property="Background" Value="Transparent"/>
                                             <Setter Property="Foreground" Value="White"/>
                                             <Setter Property="BorderThickness" Value="0"/>
-                                            <Setter Property="Padding" Value="5"/>
                                             <Setter Property="FontSize" Value="12"/>
+                                            <Setter Property="Padding" Value="5"/>
+                                            <!-- QUAN TRỌNG: Căn giữa nội dung -->
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <!-- Template để căn giữa hoàn hảo -->
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DataGridCell">
+                                                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                                                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+
+                                            <!-- Triggers cho Cell -->
                                             <Style.Triggers>
-                                                <Trigger Property="IsSelected" Value="True">
+                                                <!-- Khi row được selected -->
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
                                                     <Setter Property="Background" Value="#404040"/>
                                                     <Setter Property="Foreground" Value="White"/>
-                                                </Trigger>
-                                                <MultiTrigger>
-                                                    <MultiTrigger.Conditions>
-                                                        <Condition Property="IsSelected" Value="False"/>
-                                                        <Condition Property="IsMouseOver" Value="True"/>
-                                                    </MultiTrigger.Conditions>
+                                                </DataTrigger>
+                                                <!-- Khi hover -->
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
                                                     <Setter Property="Background" Value="#404040"/>
-                                                </MultiTrigger>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
 
+                                  
                                     </DataGrid.Resources>
 
                                     <!-- Style cho header -->
@@ -249,13 +265,14 @@
                                            CanUserAddRows="False" 
                                            SelectionUnit="FullRow"  
                                            VerticalScrollBarVisibility="Auto"
+                                          
                                            FontSize="15"
                                            Margin="5"
                                            Background="Transparent"
                                            AutoGenerateColumns="False"
                                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                            ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                           IsReadOnly="True"
+                                        
                                            GridLinesVisibility="None"
                                            HeadersVisibility="Column"
                                            RowBackground="#1e1e2f"
@@ -264,29 +281,43 @@
                                            >
 
                                     <DataGrid.Resources>
-                                        <!-- Style cho DataGridCell -->
+                                        <!-- Style cho DataGridCell  -->
                                         <Style TargetType="DataGridCell">
-                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
                                             <Setter Property="Background" Value="Transparent"/>
                                             <Setter Property="Foreground" Value="White"/>
                                             <Setter Property="BorderThickness" Value="0"/>
-                                            <Setter Property="Padding" Value="5"/>
                                             <Setter Property="FontSize" Value="12"/>
+                                            <Setter Property="Padding" Value="5"/>
+
+                                            <!-- Template để căn giữa hoàn hảo -->
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DataGridCell">
+                                                        <Border Background="{TemplateBinding Background}" 
+                                                             BorderBrush="{TemplateBinding BorderBrush}" 
+                                                             BorderThickness="{TemplateBinding BorderThickness}"
+                                                             Padding="{TemplateBinding Padding}">
+                                                         <ContentPresenter HorizontalAlignment="Center" 
+                                                         VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+
+                                            <!-- Triggers cho Cell -->
                                             <Style.Triggers>
-                                                <Trigger Property="IsSelected" Value="True">
+                                                <!-- Khi row được selected -->
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
                                                     <Setter Property="Background" Value="#404040"/>
                                                     <Setter Property="Foreground" Value="White"/>
-                                                </Trigger>
-                                                <MultiTrigger>
-                                                    <MultiTrigger.Conditions>
-                                                        <Condition Property="IsSelected" Value="False"/>
-                                                        <Condition Property="IsMouseOver" Value="True"/>
-                                                    </MultiTrigger.Conditions>
+                                                </DataTrigger>
+                                                <!-- Khi hover -->
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
                                                     <Setter Property="Background" Value="#404040"/>
-                                                </MultiTrigger>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
+
 
                                     </DataGrid.Resources>
 
@@ -361,6 +392,7 @@
                                                 </DataTemplate>
                                             </DataGridTemplateColumn.CellEditingTemplate>
                                         </DataGridTemplateColumn>
+                                        
                                     </DataGrid.Columns>
 
                                 </DataGrid>
@@ -385,8 +417,10 @@
                     </StackPanel>
                 </Grid>
             </TabItem>
+            
+            
             <TabItem Header="Factory" FontSize="16" Foreground="#FF2E417E" FontWeight="Bold" >
-                <Grid  Margin="1,1,1,1">
+                <Grid  Margin="1,1,1,1" Background="#1F1C2C">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="65*"/>
                         <RowDefinition Height="35"/>
@@ -396,63 +430,83 @@
                             <ColumnDefinition Width="65*"/>
                             <ColumnDefinition Width="35*"/>
                         </Grid.ColumnDefinitions>
-                        <GroupBox Grid.Column="0" Header="Information" Foreground="DarkBlue" Margin="4,4,4,4">
+                        <GroupBox Grid.Column="0" Header="Information" Foreground="White" BorderThickness="0.5" BorderBrush="#404040" Margin="4,4,4,4">
                             <Grid >
 
-                                <DataGrid  x:Name="FactoryGrid" 
+                                <DataGrid  Background="Transparent"  x:Name="FactoryGrid" 
                                 ItemsSource="{Binding FactoryData}" SelectedItem="{Binding SelectedFactory, Mode=TwoWay}" 
-                                   AutoGenerateColumns="False" 
-                                   GridLinesVisibility="All" 
-                                   CanUserAddRows="False" 
-                                   SelectionUnit="FullRow" 
-                                   IsReadOnly="True" 
-                                   FontWeight="DemiBold"
+                                    AutoGenerateColumns="False"
+                                     SelectionMode="Single" 
+                                     SelectionUnit="FullRow" 
+                                     IsReadOnly="True" 
+                                     VerticalContentAlignment="Bottom"
+                                     VerticalScrollBarVisibility="Auto"                          
+                                     CanUserAddRows="False"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                     GridLinesVisibility="None"
                                      HeadersVisibility="Column"
-                                   VerticalScrollBarVisibility="Auto"
-                                   FontSize="15">
+                                     RowBackground="#1e1e2f"
+                                     BorderThickness="0"
+                                     AlternatingRowBackground="#21213a"
+                                    FontSize="15">
 
-                                    <!-- Style cho Header -->
-                                    <DataGrid.ColumnHeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader">
-                                            <Setter Property="Background" Value="#2980B9"/>
-
-                                            <Setter Property="Foreground" Value="White"/>
-                                            <Setter Property="FontWeight" Value="SemiBold"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
-                                            <Setter Property="BorderBrush" Value="#2980B9"/>
-                                            <Setter Property="Padding" Value="10,6"/>
-                                        </Style>
-                                    </DataGrid.ColumnHeaderStyle>
-
-                                    <!-- Style cho Cell -->
-                                    <DataGrid.CellStyle>
+                                    <DataGrid.Resources>
+                                        <!-- Style cho DataGridCell  -->
                                         <Style TargetType="DataGridCell">
-                                            <!-- Căn giữa -->
-                                            <Setter Property="HorizontalContentAlignment" Value="Center" />
-                                            <Setter Property="VerticalContentAlignment" Value="Center" />
-                                            <Setter Property="Padding" Value="6,4" />
-                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
-                                            <Setter Property="BorderBrush" Value="#D0D0D0"/>
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                            <Setter Property="FontSize" Value="12"/>
+                                            <Setter Property="Padding" Value="5"/>
+                                           
+                                            <!-- Template để căn giữa hoàn hảo -->
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DataGridCell">
+                                                        <Border Background="{TemplateBinding Background}" 
+                                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                Padding="{TemplateBinding Padding}">    
+                                                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
 
-                                            <!-- Nền mặc định xen kẽ -->
-                                            <Setter Property="Background" Value="{x:Null}"/>
-
-                                            <!-- Hiệu ứng khi hover -->
+                                            <!-- Triggers cho Cell -->
                                             <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#EAF2F8"/>
-                                                </Trigger>
-
-                                                <!-- Khi cell được chọn -->
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter Property="Background" Value="#3498DB"/>
+                                                <!-- Khi row được selected -->
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                                    <Setter Property="Background" Value="#404040"/>
                                                     <Setter Property="Foreground" Value="White"/>
-                                                </Trigger>
+                                                </DataTrigger>
+                                                <!-- Khi hover -->
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                                    <Setter Property="Background" Value="#404040"/>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </DataGrid.CellStyle>
 
+
+                                    </DataGrid.Resources>
+
+                                    <!-- Style cho header -->
+                                    <DataGrid.ColumnHeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="Background" Value="#25253a"/>
+                                            <Setter Property="Foreground" Value="#949ba8"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="FontSize" Value="15"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="8,8"/>
+                                            <Setter Property="Height" Value="40"/>
+                                            <Setter Property="BorderThickness" Value="1,1,1,1"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                        </Style>
+                                    </DataGrid.ColumnHeaderStyle>
 
                                     <DataGrid.Columns >
                                         <DataGridTextColumn Header="No" Binding="{Binding No}" Width="Auto">
@@ -501,59 +555,82 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Grid.Column="1"  Header="Editor" Foreground="DarkBlue" Margin="4,4,4,4">
+                        <GroupBox Grid.Column="1"  Header="Editor" Foreground="White" BorderThickness="0.5" BorderBrush="#404040" Margin="4,4,4,4">
                             <Grid >
                                 <DataGrid  x:Name="FactoryDataGrid" 
                                    ItemsSource="{Binding SelectedFactoryDetails}" 
-                                   AutoGenerateColumns="False" 
-                                   GridLinesVisibility="All" 
+                                   AutoGenerateColumns="False"
                                    CanUserAddRows="False" 
                                        FontWeight="DemiBold"
                                    SelectionUnit="FullRow"
                                    VerticalScrollBarVisibility="Auto"
-                                   FontSize="15" Background="#FFF0F0F0" >
+                                   FontSize="15"  
+                                   Background="Transparent"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                 GridLinesVisibility="None"
+                                 HeadersVisibility="Column"
+                                 RowBackground="#1e1e2f"
+                                 BorderThickness="0"
+                                 AlternatingRowBackground="#21213a" 
+                                           >
 
-                                    <!-- Style cho Header -->
-                                    <DataGrid.ColumnHeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader">
-                                            <Setter Property="Background" Value="#2980B9"/>
-
-                                            <Setter Property="Foreground" Value="White"/>
-                                            <Setter Property="FontWeight" Value="SemiBold"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
-                                            <Setter Property="BorderBrush" Value="#2980B9"/>
-                                            <Setter Property="Padding" Value="10,6"/>
-                                        </Style>
-                                    </DataGrid.ColumnHeaderStyle>
-
-                                    <!-- Style cho Cell -->
-                                    <DataGrid.CellStyle>
+                                    <DataGrid.Resources>
+                                        <!-- Style cho DataGridCell  -->
                                         <Style TargetType="DataGridCell">
-                                            <!-- Căn giữa -->
-                                            <Setter Property="HorizontalContentAlignment" Value="Center" />
-                                            <Setter Property="VerticalContentAlignment" Value="Center" />
-                                            <Setter Property="Padding" Value="6,4" />
-                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
-                                            <Setter Property="BorderBrush" Value="#D0D0D0"/>
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                            <Setter Property="FontSize" Value="12"/>
+                                            <Setter Property="Padding" Value="5"/>
 
-                                            <!-- Nền mặc định xen kẽ -->
-                                            <Setter Property="Background" Value="{x:Null}"/>
+                                            <!-- Template để căn giữa hoàn hảo -->
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DataGridCell">
+                                                        <Border Background="{TemplateBinding Background}" 
+                                                              BorderBrush="{TemplateBinding BorderBrush}" 
+                                                              BorderThickness="{TemplateBinding BorderThickness}"
+                                                              Padding="{TemplateBinding Padding}">
+                                                               <ContentPresenter HorizontalAlignment="Center" 
+                                                          VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
 
-                                            <!-- Hiệu ứng khi hover -->
+                                            <!-- Triggers cho Cell -->
                                             <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#EAF2F8"/>
-                                                </Trigger>
-
-                                                <!-- Khi cell được chọn -->
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter Property="Background" Value="#3498DB"/>
+                                                <!-- Khi row được selected -->
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                                    <Setter Property="Background" Value="#404040"/>
                                                     <Setter Property="Foreground" Value="White"/>
-                                                </Trigger>
+                                                </DataTrigger>
+                                                <!-- Khi hover -->
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                                    <Setter Property="Background" Value="#404040"/>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </DataGrid.CellStyle>
+
+
+                                    </DataGrid.Resources>
+
+                                    <!-- Style cho header -->
+                                    <DataGrid.ColumnHeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="Background" Value="#25253a"/>
+                                            <Setter Property="Foreground" Value="#949ba8"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="FontSize" Value="15"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="8,8"/>
+                                            <Setter Property="Height" Value="40"/>
+                                            <Setter Property="BorderThickness" Value="1,1,1,1"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                        </Style>
+                                    </DataGrid.ColumnHeaderStyle>
 
 
                                     <DataGrid.Columns>
@@ -624,7 +701,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Machine Info" FontSize="16" Foreground="#FF2E417E" FontWeight="Bold" >
-                <Grid  Margin="1,1,1,1">
+                <Grid  Margin="1,1,1,1" Background="#1F1C2C">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="65*"/>
                         <RowDefinition Height="35"/>
@@ -634,61 +711,85 @@
                             <ColumnDefinition Width="65*"/>
                             <ColumnDefinition Width="35*"/>
                         </Grid.ColumnDefinitions>
-                        <GroupBox Grid.Column="0" Header="Information" Foreground="DarkBlue" Margin="4,4,4,4">
-                            <Grid >
+                        <GroupBox  Grid.Column="0" Header="Information" Foreground="White" BorderThickness="0.5" BorderBrush="#404040" Margin="4,4,4,4">
+                            <Grid>
                                 <DataGrid  x:Name="DeviceTypeDataGrid" 
                                       ItemsSource="{Binding DeviceTypeData}" 
                                       SelectedItem="{Binding SelectedDeviceTypeInfo, Mode=TwoWay}" 
-                                      AutoGenerateColumns="False" GridLinesVisibility="All" 
                                       CanUserAddRows="False" 
                                       SelectionUnit="FullRow" 
                                       IsReadOnly="True"
                                       FontWeight="DemiBold"
                                       VerticalScrollBarVisibility="Auto"                             
                                       HeadersVisibility="Column"
+                                      Background="Transparent"
+                                     AutoGenerateColumns="False"
+                                     SelectionMode="Single" 
+                                     VerticalContentAlignment="Bottom"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                     GridLinesVisibility="None"
+                                     RowBackground="#1e1e2f"
+                                     BorderThickness="0"
+                                     AlternatingRowBackground="#21213a"
                                       FontSize="15">
 
-                                    <!-- Style cho Header -->
-                                    <DataGrid.ColumnHeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader">
-                                            <Setter Property="Background" Value="#2980B9"/>
-
-                                            <Setter Property="Foreground" Value="White"/>
-                                            <Setter Property="FontWeight" Value="SemiBold"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
-                                            <Setter Property="BorderBrush" Value="#2980B9"/>
-                                            <Setter Property="Padding" Value="10,6"/>
-                                        </Style>
-                                    </DataGrid.ColumnHeaderStyle>
-
-                                    <!-- Style cho Cell -->
-                                    <DataGrid.CellStyle>
+                                    <DataGrid.Resources>
+                                        <!-- Style cho DataGridCell  -->
                                         <Style TargetType="DataGridCell">
-                                            <!-- Căn giữa -->
-                                            <Setter Property="HorizontalContentAlignment" Value="Center" />
-                                            <Setter Property="VerticalContentAlignment" Value="Center" />
-                                            <Setter Property="Padding" Value="6,4" />
-                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
-                                            <Setter Property="BorderBrush" Value="#D0D0D0"/>
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                            <Setter Property="FontSize" Value="12"/>
+                                            <Setter Property="Padding" Value="5"/>
 
-                                            <!-- Nền mặc định xen kẽ -->
-                                            <Setter Property="Background" Value="{x:Null}"/>
+                                            <!-- Template để căn giữa hoàn hảo -->
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DataGridCell">
+                                                        <Border Background="{TemplateBinding Background}" 
+                                                              BorderBrush="{TemplateBinding BorderBrush}" 
+                                                              BorderThickness="{TemplateBinding BorderThickness}"
+                                                              Padding="{TemplateBinding Padding}">
+                                                    <ContentPresenter HorizontalAlignment="Center" 
+                                                          VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
 
-                                            <!-- Hiệu ứng khi hover -->
+                                            <!-- Triggers cho Cell -->
                                             <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#EAF2F8"/>
-                                                </Trigger>
-
-                                                <!-- Khi cell được chọn -->
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter Property="Background" Value="#3498DB"/>
+                                                <!-- Khi row được selected -->
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                                    <Setter Property="Background" Value="#404040"/>
                                                     <Setter Property="Foreground" Value="White"/>
-                                                </Trigger>
+                                                </DataTrigger>
+                                                <!-- Khi hover -->
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                                    <Setter Property="Background" Value="#404040"/>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </DataGrid.CellStyle>
+
+
+                                    </DataGrid.Resources>
+
+                                    <!-- Style cho header -->
+                                    <DataGrid.ColumnHeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="Background" Value="#25253a"/>
+                                            <Setter Property="Foreground" Value="#949ba8"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="FontSize" Value="15"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="8,8"/>
+                                            <Setter Property="Height" Value="40"/>
+                                            <Setter Property="BorderThickness" Value="1,1,1,1"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                        </Style>
+                                    </DataGrid.ColumnHeaderStyle>
 
                                     <DataGrid.Columns>
                                         <DataGridTextColumn Header="No" Binding="{Binding NO}" Width="auto">
@@ -755,59 +856,87 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Grid.Column="1"  Header="Editor" Foreground="DarkBlue" Margin="4,4,4,4"  BorderThickness="1">
+                        <GroupBox Grid.Column="1"  Header="Editor" Foreground="White" BorderThickness="0.5" BorderBrush="#404040" Margin="4,4,4,4">
                             <Grid >
                                 <DataGrid  x:Name="DeviceTypeEdit" 
-                      ItemsSource="{Binding DeviceTypeEditItem}" 
-                      AutoGenerateColumns="False" GridLinesVisibility="All" 
-                      CanUserAddRows="False" 
-                      SelectionUnit="FullRow"  
-                                   FontWeight="DemiBold"
-                      VerticalScrollBarVisibility="Auto" 
-                      FontSize="15" 
-                      Grid.ColumnSpan="2" >
+                                      ItemsSource="{Binding DeviceTypeEditItem}" 
+                                      AutoGenerateColumns="False" 
+                        
+                                                   FontWeight="DemiBold"
+                                      FontSize="15" 
+                                      Grid.ColumnSpan="2" 
+                                         SelectionMode="Single" 
+                                         SelectionUnit="FullRow" 
+                                         IsReadOnly="True" 
+                                         VerticalContentAlignment="Bottom"
+                                         VerticalScrollBarVisibility="Auto"
+                                         Background="Transparent"
+                                         CanUserAddRows="False"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                         ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                         GridLinesVisibility="None"
+                                         HeadersVisibility="Column"
+                                         RowBackground="#1e1e2f"
+                                         BorderThickness="0"
+                                         AlternatingRowBackground="#21213a"
+                                           >
 
-                                    <!-- Style cho Header -->
-                                    <DataGrid.ColumnHeaderStyle>
-                                        <Style TargetType="DataGridColumnHeader">
-                                            <Setter Property="Background" Value="#2980B9"/>
-
-                                            <Setter Property="Foreground" Value="White"/>
-                                            <Setter Property="FontWeight" Value="SemiBold"/>
-                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
-                                            <Setter Property="BorderBrush" Value="#2980B9"/>
-                                            <Setter Property="Padding" Value="10,6"/>
-                                        </Style>
-                                    </DataGrid.ColumnHeaderStyle>
-
-                                    <!-- Style cho Cell -->
-                                    <DataGrid.CellStyle>
+                                    <DataGrid.Resources>
+                                        <!-- Style cho DataGridCell  -->
                                         <Style TargetType="DataGridCell">
-                                            <!-- Căn giữa -->
-                                            <Setter Property="HorizontalContentAlignment" Value="Center" />
-                                            <Setter Property="VerticalContentAlignment" Value="Center" />
-                                            <Setter Property="Padding" Value="6,4" />
-                                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
-                                            <Setter Property="BorderBrush" Value="#D0D0D0"/>
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Foreground" Value="White"/>
+                                            <Setter Property="BorderThickness" Value="0"/>
+                                            <Setter Property="FontSize" Value="12"/>
+                                            <Setter Property="Padding" Value="5"/>
 
-                                            <!-- Nền mặc định xen kẽ -->
-                                            <Setter Property="Background" Value="{x:Null}"/>
+                                            <!-- Template để căn giữa hoàn hảo -->
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="DataGridCell">
+                                                        <Border Background="{TemplateBinding Background}" 
+                                                              BorderBrush="{TemplateBinding BorderBrush}" 
+                                                              BorderThickness="{TemplateBinding BorderThickness}"
+                                                              Padding="{TemplateBinding Padding}">
+                                                         <ContentPresenter HorizontalAlignment="Center" 
+                                                          VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
 
-                                            <!-- Hiệu ứng khi hover -->
+                                            <!-- Triggers cho Cell -->
                                             <Style.Triggers>
-                                                <Trigger Property="IsMouseOver" Value="True">
-                                                    <Setter Property="Background" Value="#EAF2F8"/>
-                                                </Trigger>
-
-                                                <!-- Khi cell được chọn -->
-                                                <Trigger Property="IsSelected" Value="True">
-                                                    <Setter Property="Background" Value="#3498DB"/>
+                                                <!-- Khi row được selected -->
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                                    <Setter Property="Background" Value="#404040"/>
                                                     <Setter Property="Foreground" Value="White"/>
-                                                </Trigger>
+                                                </DataTrigger>
+                                                <!-- Khi hover -->
+                                                <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                                    <Setter Property="Background" Value="#404040"/>
+                                                </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </DataGrid.CellStyle>
+
+
+                                    </DataGrid.Resources>
+
+                                    <!-- Style cho header -->
+                                    <DataGrid.ColumnHeaderStyle>
+                                        <Style TargetType="DataGridColumnHeader">
+                                            <Setter Property="Background" Value="#25253a"/>
+                                            <Setter Property="Foreground" Value="#949ba8"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                            <Setter Property="FontSize" Value="15"/>
+                                            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                            <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                            <Setter Property="Padding" Value="8,8"/>
+                                            <Setter Property="Height" Value="40"/>
+                                            <Setter Property="BorderThickness" Value="1,1,1,1"/>
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                        </Style>
+                                    </DataGrid.ColumnHeaderStyle>
 
                                     <DataGrid.Columns>
                                         <!--Cột Device type Edit-->
