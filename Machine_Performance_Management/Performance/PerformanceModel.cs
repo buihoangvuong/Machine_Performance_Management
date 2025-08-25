@@ -206,7 +206,7 @@ namespace Machine_Performance_Management.Performance
                                 if (!parsedDate.HasValue)
                                     continue;
 
-                                string dateKey = parsedDate.Value.ToString("dd.MM.yyyy");
+                                string dateKey = parsedDate.Value.ToString("MM.dd");
                                 datesInSheet.Add(dateKey);
 
                                 perf.Date[dateKey] = parsedDate.Value.Day;
@@ -242,7 +242,7 @@ namespace Machine_Performance_Management.Performance
                             if (datesInSheet.Count > 0)
                             {
                                 var sortedDates = datesInSheet
-                                    .Select(d => DateTime.ParseExact(d, "dd.MM.yyyy", CultureInfo.InvariantCulture))
+                                    .Select(d => DateTime.ParseExact(d, "MM.dd", CultureInfo.InvariantCulture))
                                     .OrderBy(d => d)
                                     .ToList();
 
@@ -254,14 +254,36 @@ namespace Machine_Performance_Management.Performance
                                 }
 
                                 DateTime lastDate = sortedDates.Last();
+                                HashSet<string> dateSet = new HashSet<string>();
+                                List<string> duplicateDates = new List<string>();
+
                                 for (var date = sortedDates.First(); date <= lastDate; date = date.AddDays(1))
                                 {
-                                    if (!datesInSheet.Contains(date.ToString("dd.MM.yyyy")))
+                                    string dateString = date.ToString("MM.dd");
+
+                                    if (!datesInSheet.Contains(date.ToString("MM.dd")))
                                     {
                                         MessageBox.Show($"Ngày {date:dd.MM.yyyy} bị thiếu trong sheet '{worksheet.Name}'.",
                                                         "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
                                         return false;
                                     }
+                                    // Kiểm tra ngày trùng lặp
+                                    if (dateSet.Contains(dateString))
+                                    {
+                                        duplicateDates.Add(dateString);
+                                    }
+                                    else
+                                    {
+                                        dateSet.Add(dateString);
+                                    }
+                                }
+
+                                // Thông báo về ngày trùng lặp nếu có
+                                if (duplicateDates.Count > 0)
+                                {
+                                    string message = "Có ngày trùng lặp: " + string.Join(", ", duplicateDates);
+                                    MessageBox.Show(message, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                                    return false;
                                 }
                             }
 
@@ -312,13 +334,13 @@ namespace Machine_Performance_Management.Performance
                         var firstDateString = dates.First();
                         var lastDateString = dates.Last();
 
-                        DateTime firstDate = DateTime.ParseExact(firstDateString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
-                        DateTime lastDate = DateTime.ParseExact(lastDateString, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                        DateTime firstDate = DateTime.ParseExact(firstDateString, "MM.dd", CultureInfo.InvariantCulture);
+                        DateTime lastDate = DateTime.ParseExact(lastDateString, "MM.dd", CultureInfo.InvariantCulture);
 
                         for (var date = firstDate; date <= lastDate; date = date.AddDays(1))
                         {
-                            var formattedDate = date.ToString("dd.MM.yyyy");
-                            var dateKey = date.ToString("dd.MM.yyyy");
+                            var formattedDate = date.ToString("MM.dd");
+                            var dateKey = date.ToString("MM.dd");
 
                             var queryInsert = @"
                                 INSERT INTO machine_performance 
@@ -364,7 +386,11 @@ namespace Machine_Performance_Management.Performance
                     {
                         while (reader.Read())
                         {
-                            factoryList.Add(reader["factory"]?.ToString());
+                            var factory = reader["factory"]?.ToString();
+                            if (!string.IsNullOrWhiteSpace(factory))
+                            {
+                                factoryList.Add(factory);
+                            }
                         }
                     }
                 }
@@ -376,6 +402,42 @@ namespace Machine_Performance_Management.Performance
 
             return factoryList;
         }
+
+        public List<string> GetMachineTypeList(string factory)
+        {
+            var machineTypeList = new List<string>();
+
+            try
+            {
+                using (DbService db = new DbService(config))
+                {
+                    StringBuilder query = new StringBuilder();
+                    query.Append("SELECT DISTINCT device_type FROM machine_performance WHERE factory = @factory");
+
+                    var cmd = db.GetMySqlCommand(query.ToString());
+                    cmd.Parameters.AddWithValue("@factory", factory);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var deviceType = reader["device_type"]?.ToString();
+                            if (!string.IsNullOrWhiteSpace(deviceType))
+                            {
+                                machineTypeList.Add(deviceType);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[ERROR] : {ex.Message}");
+            }
+
+            return machineTypeList;
+        }
+
 
         public List<string> LoadDeviceTypeList(string factory)
         {
@@ -416,17 +478,17 @@ namespace Machine_Performance_Management.Performance
             return deviceTypes;
         }
 
-        public List<DevicePerformance> LoadPerformanceMachineList(string factory)
+        public List<DevicePerformance> LoadPerformanceMachineList(string factory, string machinetype, DateTime fromDate, DateTime toDate)
         {
             var result = new List<DevicePerformance>();
             var deviceDict = new Dictionary<string, DevicePerformance>();
             var dateList = new List<string>();
-
             StringBuilder query = new StringBuilder("SELECT * FROM machine_performance");
             List<string> conditions = new List<string>();
             if (!string.IsNullOrWhiteSpace(factory) && factory != "All")
                 conditions.Add("factory = @factory");
-
+            if (!string.IsNullOrWhiteSpace(machinetype) && machinetype != "All")
+                conditions.Add("device_type = @device_type");
             if (conditions.Any())
                 query.Append(" WHERE " + string.Join(" AND ", conditions));
             query.Append(" ORDER BY device_name, date");
@@ -438,6 +500,8 @@ namespace Machine_Performance_Management.Performance
                     MySqlCommand cmd = db.GetMySqlCommand(query.ToString());
                     if (!string.IsNullOrWhiteSpace(factory) && factory != "All")
                         cmd.Parameters.AddWithValue("@factory", factory);
+                    if (!string.IsNullOrWhiteSpace(machinetype) && machinetype != "All")
+                        cmd.Parameters.AddWithValue("@device_type", machinetype);
 
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -447,6 +511,22 @@ namespace Machine_Performance_Management.Performance
                             string item = reader["device_type"]?.ToString();
                             string deviceName = reader["device_name"]?.ToString();
                             string date = reader["date"]?.ToString();
+
+                            // Lọc theo khoảng ngày trong năm hiện tại
+                            if (!string.IsNullOrEmpty(date))
+                            {
+                                //Kiểm tra đnh dạng dd.MM và chuyển sang datetime
+                                if (DateTime.TryParseExact(date, "MM.dd", null, System.Globalization.DateTimeStyles.None, out DateTime dateValue))
+                                {
+                                    var dateWithYear = new DateTime(fromDate.Year, dateValue.Month, dateValue.Day);
+                                    if (dateWithYear < fromDate || dateWithYear > toDate)
+                                        continue;
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
 
                             double performanceST = reader["st"] != DBNull.Value ? Convert.ToDouble(reader["st"]) : 0;
                             double dailyPerformance = reader["daily_performance"] != DBNull.Value ? Convert.ToDouble(reader["daily_performance"]) : 0;
@@ -509,6 +589,30 @@ namespace Machine_Performance_Management.Performance
             result = result.OrderBy(x => x.Machine_Name).ToList();
 
             return result;
+        }
+
+        public DateTime? GetServerTime()
+        {
+            string query = "SELECT CURRENT_TIMESTAMP";
+            try
+            {
+                using (DbService db = new DbService(config))  // Mở kết nối MySQL
+                {
+                    using (MySqlCommand cmd = db.GetMySqlCommand(query))  // Lấy MySqlCommand
+                    {
+                        var result = cmd.ExecuteScalar();
+                        if (result != null)
+                        {
+                            return Convert.ToDateTime(result);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Lỗi: " + ex.Message);
+            }
+            return null; // Trả về null nếu có lỗi
         }
 
 

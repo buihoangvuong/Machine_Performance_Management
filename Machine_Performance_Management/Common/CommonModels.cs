@@ -4,6 +4,7 @@ using MySqlConnector;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,6 +15,7 @@ using System.Windows.Input;
 
 namespace Machine_Performance_Management.Common
 {
+
     public class UserProfile
     {
         public int No { get; set; }
@@ -24,15 +26,27 @@ namespace Machine_Performance_Management.Common
         public string FullName { get; set; }
     }
 
-    public class DevicePerformance
+    public class DevicePerformance : ObservableObject
     {
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set => SetProperty(ref _isSelected, value); // SetProperty sẽ gọi OnPropertyChanged
+        }
+
+
+        //public event PropertyChangedEventHandler PropertyChanged;
+        //protected void OnPropertyChanged(string propertyName) =>
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
         public int NO { get; set; }
 
-		//public string Date { get; set; }
-		public Dictionary<string, double> Date { get; set; }
-	= new Dictionary<string, double>();
+        //public string Date { get; set; }
+        public Dictionary<string, double> Date { get; set; }
+     = new Dictionary<string, double>();
 
-		public string Factory { get; set; }
+        public string Factory { get; set; }
         public string Item { get; set; }
         public string Machine_Name { get; set; }
 
@@ -64,7 +78,7 @@ namespace Machine_Performance_Management.Common
             }
         }
     }
-	public class DevicePerformance1
+    public class DevicePerformance1
 	{
 		public int NO { get; set; }
 		public string Date { get; set; }

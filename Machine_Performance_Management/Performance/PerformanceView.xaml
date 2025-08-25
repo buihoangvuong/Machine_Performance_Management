@@ -1,340 +1,404 @@
-﻿ <UserControl x:Class="Machine_Performance_Management.Performance.PerformanceView"
+﻿<UserControl x:Class="Machine_Performance_Management.Performance.PerformanceView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors" 
-             
-                     xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-             
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              xmlns:viewmodel="clr-namespace:Machine_Performance_Management.Performance"
              d:DataContext="{d:DesignInstance Type=viewmodel:PerformanceViewModel}"
-             
              Background="#1F1C2C"
-             mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="800">
-    <Grid Margin="0 30 0 0">
+             mc:Ignorable="d"
+             d:DesignHeight="700"
+             d:DesignWidth="1200">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="100" />
             <RowDefinition Height="55*" />
             <RowDefinition Height="5*" />
         </Grid.RowDefinitions>
-
         <Grid Grid.Row="0">
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
-
-            <Grid Grid.Row="0"></Grid>
+            <Grid Grid.Row="0" />
             <StackPanel>
                 <TextBlock Text="설비 가동율 관리 현황"
-                           Foreground="DeepSkyBlue" FontSize="20" FontWeight="SemiBold"/>
+                           Foreground="DeepSkyBlue"
+                           FontSize="20"
+                           FontWeight="SemiBold" />
                 <DockPanel>
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <Ellipse Fill="Red" Width="10" Height="10" Margin="0,0,5,0" />
-                        <TextBlock Text="60% 이하" VerticalAlignment="Center" Foreground="#D3D3D3"/>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5">
+                        <Ellipse Fill="Red"
+                                 Width="10"
+                                 Height="10"
+                                 Margin="0,0,5,0" />
+                        <TextBlock Text="60% 이하"
+                                   VerticalAlignment="Center"
+                                   Foreground="#D3D3D3" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <Ellipse Fill="Orange" Width="10" Height="10" Margin="0,0,5,0" />
-                        <TextBlock Text="61% ~ 85%" VerticalAlignment="Center"  Foreground="#D3D3D3"/>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5">
+                        <Ellipse Fill="Orange"
+                                 Width="10"
+                                 Height="10"
+                                 Margin="0,0,5,0" />
+                        <TextBlock Text="61% ~ 85%"
+                                   VerticalAlignment="Center"
+                                   Foreground="#D3D3D3" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="5">
-                        <Ellipse Fill="Green" Width="10" Height="10" Margin="0,0,5,0" />
-                        <TextBlock Text="86% 이상" VerticalAlignment="Center"  Foreground="#D3D3D3"/>
+                    <StackPanel Orientation="Horizontal"
+                                Margin="5">
+                        <Ellipse Fill="Green"
+                                 Width="10"
+                                 Height="10"
+                                 Margin="0,0,5,0" />
+                        <TextBlock Text="86% 이상"
+                                   VerticalAlignment="Center"
+                                   Foreground="#D3D3D3" />
                     </StackPanel>
                 </DockPanel>
             </StackPanel>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <!-- Cột Factory - giảm xuống -->
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
                     <!-- Cột Machine Type - cố định -->
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
                     <!-- Cột Date Filter - tăng lên để chứa 2 DatePicker + label -->
-                    <ColumnDefinition Width="Auto" MinWidth="400"/>
+                    <ColumnDefinition Width="Auto"
+                                      MinWidth="400" />
                     <!-- Cột Buttons - cố định -->
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-
                 <!-- Factory -->
-                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0 0 20 0">
+                <StackPanel Grid.Column="0"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Margin="0 0 20 0">
                     <TextBlock Text="Factory:"
-                       FontWeight="Bold"
-                       Foreground="#D3D3D3"
-                       VerticalAlignment="Center"
-                       Width="60"
-                       FontSize="14"/>
-
+                               FontWeight="Bold"
+                               Foreground="#D3D3D3"
+                               VerticalAlignment="Center"
+                               Width="60"
+                               FontSize="14" />
                     <ComboBox Style="{StaticResource CustomComboBoxStyle}"
-                      Width="90"
-                      ItemsSource="{Binding FactoryitemDataManagement}"
-                      SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}"/>
+                              Width="90"
+                              ItemsSource="{Binding FactoryitemDataManagement}"
+                              SelectedItem="{Binding SelectedFactoryItemDataManagement, Mode=TwoWay}" />
                 </StackPanel>
-
                 <!-- Machine Type -->
-                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="0 0 20 0">
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Margin="0 0 20 0">
                     <TextBlock Text="Machine Type:"
-                       FontWeight="Bold" Foreground="#D3D3D3"
-                       VerticalAlignment="Center"
-                       Width="100"
-                       FontSize="14"/>
-                    <ComboBox Height="30" Width="140"
-                      Style="{StaticResource CustomComboBoxStyle}"
-                      ItemsSource="{Binding MachineTypeDataItem}"
-                      SelectedItem="{Binding SelectedMachineTypeItem, Mode=TwoWay}"
-                      Margin="5 0 0 0"
-                      FontSize="14"/>   
+                               FontWeight="Bold"
+                               Foreground="#D3D3D3"
+                               VerticalAlignment="Center"
+                               Width="100"
+                               FontSize="14" />
+                    <ComboBox Height="30"
+                              Width="140"
+                              Style="{StaticResource CustomComboBoxStyle}"
+                              ItemsSource="{Binding MachineTypeDataItem}"
+                              SelectedItem="{Binding SelectedMachineTypeItem, Mode=TwoWay}"
+                              Margin="5 0 0 0"
+                              FontSize="14" />
                 </StackPanel>
-
                 <!-- Date Filter -->
                 <Grid Grid.Column="2">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-
-                    <Border Grid.Column="0" 
-                    BorderBrush="#D1D5DB" BorderThickness="1"
-                    CornerRadius="6"
-                    Padding="5"
-                    Background="#1e1e2f"
-                    VerticalAlignment="Center"
-                    Margin="0,0,40,0"
-                    >
+                    <Border Grid.Column="0"
+                            BorderBrush="#D1D5DB"
+                            BorderThickness="1"
+                            CornerRadius="6"
+                            Padding="5"
+                            Background="#1e1e2f"
+                            VerticalAlignment="Center"
+                            Margin="0,0,40,0">
                         <StackPanel Orientation="Horizontal">
-                            <DatePicker Name="StartDatePicker" Width="150" 
-                                SelectedDate="{Binding DateFrom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock Text="đến" VerticalAlignment="Center" Margin="5,0" Foreground="White" />
-                            <DatePicker Background="Transparent"  Name="EndDatePicker" Width="130" 
-                                SelectedDate="{Binding DateTo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <DatePicker Name="StartDatePicker"
+                                        Width="150"
+                                        SelectedDate="{Binding DateFrom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBlock Text="đến"
+                                       VerticalAlignment="Center"
+                                       Margin="5,0"
+                                       Foreground="White" />
+                            <DatePicker Background="Transparent"
+                                        Name="EndDatePicker"
+                                        Width="130"
+                                        SelectedDate="{Binding DateTo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                     </Border>
-
                     <!-- Search Button -->
                     <Button Grid.Column="1"
-                    Content="Search"
-                    Margin="0 0 20 0"
-                    Command="{Binding SearchCommand}"
-                    Style="{StaticResource ButtonStyleSmall}"/>
+                            Content="Search"
+                            Margin="0 0 20 0"
+                            Command="{Binding SearchCommand}"
+                            Style="{StaticResource ButtonStyleSmall}" />
                 </Grid>
-
                 <!-- Import Button -->
                 <Button Grid.Column="3"
-                    Command="{Binding ImportCommand}"
-                    Style="{StaticResource ButtonStyleSmall}">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="Import Data" VerticalAlignment="Center" />
+                        Command="{Binding ImportCommand}"
+                        Style="{StaticResource ButtonStyleSmall}">
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="Import Data"
+                                   VerticalAlignment="Center" />
                     </StackPanel>
                 </Button>
-
             </Grid>
         </Grid>
-
-        <!--<Border BorderThickness="1" BorderBrush="#DDDDDD" CornerRadius="8" Padding="15" Margin="10" Background="#FAFAFA">
-        </Border>-->
-
-        <Border BorderThickness="1" Grid.Row="1" CornerRadius="10" BorderBrush="#404040" Margin="0 0 10 0" ClipToBounds="True">
-            <DataGrid x:Name="MyDataGrid" 
-               Margin="5"
-               Background="Transparent"
-               ItemsSource="{Binding PerFormanceData}"
-               AutoGenerateColumns="False"
-               CanUserAddRows="False"
-               ScrollViewer.HorizontalScrollBarVisibility="Auto"
-               ScrollViewer.VerticalScrollBarVisibility="Auto"
-               IsReadOnly="True"
-               SelectionUnit="Cell"
-               MouseLeftButtonUp="DataGrid_MouseDoubleClick"
-               GridLinesVisibility="None"
-               HeadersVisibility="Column"
-               RowBackground="#1e1e2f"
-               BorderThickness="0"
-               AlternatingRowBackground="#21213a">
-
+        <!-- <Border BorderThickness="1" BorderBrush="#DDDDDD" CornerRadius="8" Padding="15" Margin="10" Background="#FAFAFA">
+        </Border> -->
+        <Border BorderThickness="1"
+                Grid.Row="1"
+                CornerRadius="10"
+                BorderBrush="#404040"
+                Margin="0 0 10 0"
+                ClipToBounds="True">
+            <DataGrid x:Name="MyDataGrid"
+                      Margin="5"
+                      Background="Transparent"
+                      ItemsSource="{Binding PerFormanceData}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                      ScrollViewer.VerticalScrollBarVisibility="Auto"
+                      IsReadOnly="True"
+                      SelectionUnit="Cell"
+                      MouseLeftButtonUp="DataGrid_MouseDoubleClick"
+                      GridLinesVisibility="None"
+                      HeadersVisibility="Column"
+                      RowBackground="#1e1e2f"
+                      BorderThickness="0"
+                      AlternatingRowBackground="#21213a">
                 <DataGrid.Resources>
                     <!-- Style cho DataGridCell -->
                     <Style TargetType="DataGridCell">
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="Foreground" Value="White"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="Padding" Value="5"/>
-                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Center" />
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Center" />
+                        <Setter Property="Background"
+                                Value="Transparent" />
+                        <Setter Property="Foreground"
+                                Value="White" />
+                        <Setter Property="BorderThickness"
+                                Value="0" />
+                        <Setter Property="Padding"
+                                Value="5" />
+                        <Setter Property="FontSize"
+                                Value="12" />
                         <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="#404040"/>
-                                <Setter Property="Foreground" Value="White"/>
+                            <Trigger Property="IsSelected"
+                                     Value="True">
+                                <Setter Property="Background"
+                                        Value="#404040" />
+                                <Setter Property="Foreground"
+                                        Value="White" />
                             </Trigger>
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
-                                    <Condition Property="IsSelected" Value="False"/>
-                                    <Condition Property="IsMouseOver" Value="True"/>
+                                    <Condition Property="IsSelected"
+                                               Value="False" />
+                                    <Condition Property="IsMouseOver"
+                                               Value="True" />
                                 </MultiTrigger.Conditions>
-                                <Setter Property="Background" Value="#404040"/>
+                                <Setter Property="Background"
+                                        Value="#404040" />
                             </MultiTrigger>
                         </Style.Triggers>
                     </Style>
-
                 </DataGrid.Resources>
-
                 <!-- Style cho header -->
                 <DataGrid.ColumnHeaderStyle>
                     <Style TargetType="DataGridColumnHeader">
-                        <Setter Property="Background" Value="#25253a"/>
-                        <Setter Property="Foreground" Value="#949ba8"/>
-                        <Setter Property="FontWeight" Value="SemiBold"/>
-                        <Setter Property="FontSize" Value="15"/>
-                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
-                        <Setter Property="VerticalContentAlignment" Value="Center"/>
-                        <Setter Property="Padding" Value="8,8"/>
-                        <Setter Property="Height" Value="40"/>
-                        <Setter Property="BorderThickness" Value="1,1,1,1"/>
-                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Setter Property="Background"
+                                Value="#25253a" />
+                        <Setter Property="Foreground"
+                                Value="#949ba8" />
+                        <Setter Property="FontWeight"
+                                Value="SemiBold" />
+                        <Setter Property="FontSize"
+                                Value="15" />
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Center" />
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Center" />
+                        <Setter Property="Padding"
+                                Value="8,8" />
+                        <Setter Property="Height"
+                                Value="40" />
+                        <Setter Property="BorderThickness"
+                                Value="1,1,1,1" />
+                        <Setter Property="BorderBrush"
+                                Value="Transparent" />
                     </Style>
                 </DataGrid.ColumnHeaderStyle>
-
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="NO" Binding="{Binding NO}" Width="40"/>
-                    <DataGridTextColumn Header="Factory" Binding="{Binding Factory}" Width="75"/>
-                    <DataGridTextColumn Header="Machine Type" Binding="{Binding Item}" Width="95"/>
-                    <DataGridTextColumn Header="Machine Name" Binding="{Binding Machine_Name}" Width="115"/>
+                    <DataGridTemplateColumn Width="40">
+                        <DataGridTemplateColumn.Header>
+                            <CheckBox IsThreeState="True"
+                                      IsChecked="{Binding IsAllSelected, Mode=TwoWay}" />
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="NO"
+                                        Binding="{Binding NO}"
+                                        Width="40" />
+                    <DataGridTextColumn Header="Factory"
+                                        Binding="{Binding Factory}"
+                                        Width="75" />
+                    <DataGridTextColumn Header="Machine Type"
+                                        Binding="{Binding Item}"
+                                        Width="95" />
+                    <DataGridTextColumn Header="Machine Name"
+                                        Binding="{Binding Machine_Name}"
+                                        Width="115" />
                     <!-- Cột ngày sẽ thêm động ở code-behind -->
-                    <DataGridTextColumn Header="Average" Binding="{Binding AveragePerformance, StringFormat={}{0:F2}}" Width="70"></DataGridTextColumn>
+                    <DataGridTextColumn Header="Average"
+                                        Binding="{Binding AveragePerformance, StringFormat={}{0:F2}}"
+                                        Width="70" />
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
-
         <Grid Grid.Row="2">
-            <Button Content="📊 Chart"  Margin="15 0 0 0"
+            <Button Content="📊 Chart"
+                    Margin="15 0 0 0"
                     Style="{StaticResource ButtonStyleSmall}"
                     Width="100"
                     HorizontalAlignment="Left"
-                    Command="{Binding ChartClickCommand}"/>
+                    Command="{Binding ChartClickCommand}" />
         </Grid>
-
         <!-- Popup hiển thị chi tiết -->
         <Popup x:Name="DetailPopup"
-       StaysOpen="False"
-       Placement="MousePoint"
-       AllowsTransparency="True"
-       PopupAnimation="Fade">
+               StaysOpen="False"
+               Placement="MousePoint"
+               AllowsTransparency="True"
+               PopupAnimation="Fade">
             <Border Background="#1B1C2A"
-        CornerRadius="12"
-        Padding="12"
-        BorderThickness="1"
-        BorderBrush="#333"
-        Height="180" >
+                    CornerRadius="12"
+                    Padding="12"
+                    BorderThickness="1"
+                    BorderBrush="#333"
+                    Height="180">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="160"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="160" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
                     <!-- Donut Chart Section -->
-                    <Grid Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Grid Width="130" Height="130">
+                    <Grid Grid.Column="0"
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center">
+                        <Grid Width="130"
+                              Height="130">
                             <lvc:PieChart x:Name="MyPieChart"
-                              HoverPushOut="0"
-                              InnerRadius="45"
-                              LegendLocation="None"
-                              DataTooltip="{x:Null}"
-                              Background="Transparent"
-                              Foreground="Transparent">
-                            </lvc:PieChart>
-
+                                          HoverPushOut="0"
+                                          InnerRadius="45"
+                                          LegendLocation="None"
+                                          DataTooltip="{x:Null}"
+                                          Background="Transparent"
+                                          Foreground="Transparent" />
                             <!-- % ở giữa -->
                             <TextBlock x:Name="DonutPercent"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Foreground="#00BFFF"
-                           FontSize="18"
-                           FontWeight="Bold"/>
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Foreground="#00BFFF"
+                                       FontSize="18"
+                                       FontWeight="Bold" />
                         </Grid>
                     </Grid>
-
                     <!-- Info Section -->
-                    <StackPanel Grid.Column="1" 
-                    Margin="15,10,10,10" 
-                    VerticalAlignment="Center"
-                    >
-
+                    <StackPanel Grid.Column="1"
+                                Margin="15,10,10,10"
+                                VerticalAlignment="Center">
                         <!-- Model -->
-                        <StackPanel Orientation="Horizontal" Margin="0,2">
-                            <TextBlock Text="Model" 
-                           Foreground="White" 
-                           FontSize="13"
-                           Width="55"
-                           FontWeight="SemiBold"/>
-                            <TextBlock x:Name="PopupModel" 
-                           Foreground="#00BFFF" 
-                           FontSize="13"
-                           FontWeight="Bold"
-                           Margin="10,0,0,0"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,2">
+                            <TextBlock Text="Model"
+                                       Foreground="White"
+                                       FontSize="13"
+                                       Width="55"
+                                       FontWeight="SemiBold" />
+                            <TextBlock x:Name="PopupModel"
+                                       Foreground="#00BFFF"
+                                       FontSize="13"
+                                       FontWeight="Bold"
+                                       Margin="10,0,0,0" />
                         </StackPanel>
-
                         <!-- S/T -->
-                        <StackPanel Orientation="Horizontal" Margin="0,2">
-                            <TextBlock Text="S/T" 
-                           Foreground="White" 
-                           FontSize="13"
-                           Width="55"
-                           FontWeight="SemiBold"/>
-                            <TextBlock x:Name="PopupST" 
-                           Foreground="#00BFFF" 
-                           FontSize="13"
-                           FontWeight="Bold"
-                           Margin="10,0,0,0"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,2">
+                            <TextBlock Text="S/T"
+                                       Foreground="White"
+                                       FontSize="13"
+                                       Width="55"
+                                       FontWeight="SemiBold" />
+                            <TextBlock x:Name="PopupST"
+                                       Foreground="#00BFFF"
+                                       FontSize="13"
+                                       FontWeight="Bold"
+                                       Margin="10,0,0,0" />
                         </StackPanel>
-
                         <!-- Capa/일 -->
-                        <StackPanel Orientation="Horizontal" Margin="0,2">
-                            <TextBlock Text="Capa/일" 
-                           Foreground="White" 
-                           FontSize="13"
-                           Width="55"
-                           FontWeight="SemiBold"/>
-                            <TextBlock x:Name="PopupTarget" 
-                           Foreground="#00BFFF" 
-                           FontSize="13"
-                           FontWeight="Bold"
-                           Margin="10,0,0,0"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,2">
+                            <TextBlock Text="Capa/일"
+                                       Foreground="White"
+                                       FontSize="13"
+                                       Width="55"
+                                       FontWeight="SemiBold" />
+                            <TextBlock x:Name="PopupTarget"
+                                       Foreground="#00BFFF"
+                                       FontSize="13"
+                                       FontWeight="Bold"
+                                       Margin="10,0,0,0" />
                         </StackPanel>
-
                         <!-- 생산량 -->
-                        <StackPanel Orientation="Horizontal" Margin="0,2">
-                            <TextBlock Text="생산량" 
-                           Foreground="White" 
-                           FontSize="13"
-                           Width="55"
-                           FontWeight="SemiBold"/>
-                            <TextBlock x:Name="PopupCompleted" 
-                           Foreground="#00BFFF" 
-                           FontSize="13"
-                           FontWeight="Bold"
-                           Margin="10,0,0,0"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,2">
+                            <TextBlock Text="생산량"
+                                       Foreground="White"
+                                       FontSize="13"
+                                       Width="55"
+                                       FontWeight="SemiBold" />
+                            <TextBlock x:Name="PopupCompleted"
+                                       Foreground="#00BFFF"
+                                       FontSize="13"
+                                       FontWeight="Bold"
+                                       Margin="10,0,0,0" />
                         </StackPanel>
-
                         <!-- 비고 -->
-                        <StackPanel Orientation="Horizontal" Margin="0,2">
-                            <TextBlock Text="비고" 
-                           Foreground="White" 
-                           FontSize="13"
-                           Width="55"
-                           FontWeight="SemiBold"/>
-                            <TextBlock x:Name="PopupReason" 
-                           Foreground="#00BFFF" 
-                           FontSize="13"
-                           FontWeight="Bold"
-                           Margin="10,0,0,0"
-                           TextWrapping="Wrap"/>
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,2">
+                            <TextBlock Text="비고"
+                                       Foreground="White"
+                                       FontSize="13"
+                                       Width="55"
+                                       FontWeight="SemiBold" />
+                            <TextBlock x:Name="PopupReason"
+                                       Foreground="#00BFFF"
+                                       FontSize="13"
+                                       FontWeight="Bold"
+                                       Margin="10,0,0,0"
+                                       TextWrapping="Wrap" />
                         </StackPanel>
-
                     </StackPanel>
                 </Grid>
             </Border>
         </Popup>
-
     </Grid>
 </UserControl>
