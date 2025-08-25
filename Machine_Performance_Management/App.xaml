@@ -6,7 +6,148 @@
     <Application.Resources>
 
 
-        
+            <SolidColorBrush x:Key="PrimaryColor" Color="#2563EB"/>
+            <SolidColorBrush x:Key="SecondaryColor" Color="#3B82F6"/>
+            <SolidColorBrush x:Key="AccentColor" Color="#60A5FA"/>
+            <SolidColorBrush x:Key="SuccessColor" Color="#10B981"/>
+            <SolidColorBrush x:Key="WarningColor" Color="#F59E0B"/>
+            <SolidColorBrush x:Key="DangerColor" Color="#EF4444"/>
+            <SolidColorBrush x:Key="BackgroundLight" Color="#FFFFFF"/>
+            <SolidColorBrush x:Key="BackgroundDark" Color="#F9FAFB"/>
+            <SolidColorBrush x:Key="BorderColor" Color="#E5E7EB"/>
+            <SolidColorBrush x:Key="TextPrimary" Color="#111827"/>
+            <SolidColorBrush x:Key="TextSecondary" Color="#6B7280"/>
+
+            <!-- Button Style -->
+            <Style x:Key="ModernButtonStyle" TargetType="Button">
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="FontWeight" Value="Medium"/>
+                <Setter Property="Height" Value="36"/>
+                <Setter Property="MinWidth" Value="100"/>
+                <Setter Property="Padding" Value="16,0"/>
+                <Setter Property="BorderThickness" Value="0"/>
+                <Setter Property="Cursor" Value="Hand"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border" 
+                              Background="{TemplateBinding Background}"
+                              BorderBrush="{TemplateBinding BorderBrush}"
+                              BorderThickness="{TemplateBinding BorderThickness}"
+                              CornerRadius="6">
+                                <ContentPresenter HorizontalAlignment="Center" 
+                                          VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect Color="Black" Direction="320" 
+                                                      ShadowDepth="2" Opacity="0.2" BlurRadius="5"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Opacity" Value="0.8"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="ComboboxStyle" TargetType="ComboBox">
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="BorderBrush" Value="Gray"/>
+                <Setter Property="Padding" Value="2"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Left"/>
+                <Setter Property="MinWidth" Value="35"/>
+                <Setter Property="FontSize" Value="27"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ComboBox">
+                            <Grid>
+                                <!-- Viền ngoài của ComboBox -->
+                                <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="10"
+                            Padding="2">
+                                    <Grid>
+                                        <!-- Hiển thị giá trị đã chọn -->
+                                        <ContentPresenter Name="ContentSite"
+                                      IsHitTestVisible="False"
+                                      Content="{TemplateBinding SelectionBoxItem}"
+                                      ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                      ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                      VerticalAlignment="Center"
+                                      HorizontalAlignment="Left"
+                                      Margin="3"/>
+
+                                        <!-- Nút mở dropdown -->
+                                        <ToggleButton x:Name="DropDownToggle"
+                                  Grid.Column="1"
+                                  Background="Transparent"
+                                  BorderThickness="0"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Center"
+                                  ClickMode="Press"
+                                  IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                  Width="25" Height="25" >
+                                            <Path Fill="Black" Data="M 0 0 L 8 8 L 16 0 Z"
+                              Width="20" Height="10"/>
+                                        </ToggleButton>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Popup chứa danh sách -->
+                                <Popup x:Name="Popup"
+                           Placement="Bottom"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           AllowsTransparency="True"
+                           Focusable="False">
+                                    <Border Background="White"
+                                BorderBrush="Gray"
+                                BorderThickness="1"
+                                CornerRadius="5"
+                                MinWidth="{TemplateBinding ActualWidth}">
+                                        <ScrollViewer MaxHeight="275">
+                                            <StackPanel IsItemsHost="True"/>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Create Button Style -->
+            <Style x:Key="CreateButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+                <Setter Property="Background" Value="{StaticResource SuccessColor}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+
+            <!-- Update Button Style -->
+            <Style x:Key="UpdateButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+                <Setter Property="Background" Value="{StaticResource SecondaryColor}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+
+            <!-- Delete Button Style -->
+            <Style x:Key="DeleteButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
+                <Setter Property="Background" Value="{StaticResource DangerColor}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+
+
+
+
         <Style x:Key="ButtonStyleSmall" TargetType="Button">
             <Setter Property="Background" Value="#ffd54f"/>
             <Setter Property="Foreground" Value="Black"/>

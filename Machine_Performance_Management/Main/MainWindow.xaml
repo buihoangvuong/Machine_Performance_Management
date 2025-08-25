@@ -392,7 +392,7 @@
                             <StackPanel>
                                 <Button x:Name="UserManagerBtn" Margin="20 0 0 0"
                              Style="{StaticResource SidebarButtonStyle}"
-                             Command="{Binding ClickAdmin}"
+                             Command="{Binding ClickUser}"
                              Tag="UserManager">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="👥" FontSize="20" Margin="0,0,20,0"/>
@@ -401,10 +401,21 @@
                                 </Button>
 
                                 <Button x:Name="SpecInfoManagerBtn" Margin="20 0 0 0"
-                             Style="{StaticResource SidebarButtonStyle}" 
-                             Tag="SpecInfoManager">
+                        Style="{StaticResource SidebarButtonStyle}" 
+                        Command="{Binding ClickAdmin}"
+                        Tag="SpecInfoManager">
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock Text="🛢" FontSize="20" Margin="0,0,20,0"/>
+                                        <TextBlock Text="사양 관리자" FontSize="17" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+
+                                <Button x:Name="FactoryManagerBtn" Margin="20 0 0 0"
+                             Style="{StaticResource SidebarButtonStyle}" 
+                             Command="{Binding ClickFactory}"
+                             Tag="SpecInfoManager">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="🏭" FontSize="20" Margin="0,0,20,0"/>
                                         <TextBlock Text="사양 관리자" FontSize="17" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Button>

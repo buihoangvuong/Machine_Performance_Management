@@ -1,9 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Machine_Performance_Management.Admin;
+using Machine_Performance_Management.Factory;
 using Machine_Performance_Management.Home;
 using Machine_Performance_Management.Login;
 using Machine_Performance_Management.Performance;
+using Machine_Performance_Management.User;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -88,6 +90,13 @@ namespace Machine_Performance_Management.Main
         private ICommand _clickAdmin;
         public ICommand ClickAdmin => _clickAdmin ?? (_clickAdmin = new RelayCommand(MenuAdmin));
 
+        private ICommand _clickUser;
+        public ICommand ClickUser => _clickUser ?? (_clickUser = new RelayCommand(MenuUser));
+
+
+        private ICommand _clickFactory;
+        public ICommand ClickFactory => _clickFactory ?? (_clickFactory = new RelayCommand(MenuFactory));
+
         private ICommand _clickLogOut;
         public ICommand ClickLogOut => _clickLogOut ?? (_clickLogOut = new RelayCommand(MenuLogOut));
         public MainWindowViewModel(string username, string role, string fullname)
@@ -122,6 +131,20 @@ namespace Machine_Performance_Management.Main
 			CurrentView = new AdminView(FullName);
 			SelectedMenuItem = "Admin";
 		}
+
+        public void MenuUser()
+        {
+            CurrentView = new UserControl1(FullName);
+            SelectedMenuItem = "User";
+        }
+
+        public void MenuFactory()
+        {
+            CurrentView = new FatoryView(FullName);
+            SelectedMenuItem = "Factory";
+        }
+
+
 
 
         public void MenuLogOut()
